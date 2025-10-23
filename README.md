@@ -55,3 +55,29 @@ javac -d bin src/main/Main.java src/main/model/*.java src/main/controller/*.java
 ```powershell
 java -cp bin main.Main
 ```
+
+## 🧪 Como Executar os Testes
+
+### Compilar os testes
+
+```powershell
+javac -d bin src/main/model/*.java src/main/controller/*.java src/main/view/*.java src/test/*.java
+```
+
+### Executar todos os testes
+
+```powershell
+java -ea -cp bin test.TestRunner
+```
+
+**Nota:** A flag `-ea` é necessária para habilitar assertions.
+
+## 🎯 Boas Práticas Aplicadas
+
+- Separação em camadas (Model, View, Controller)
+- Encapsulamento de dados
+- Validação de entradas
+- Tratamento de exceções
+- Testes unitários
+- Código limpo e legível
+- Documentação com Javadoc
