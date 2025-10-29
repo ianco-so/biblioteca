@@ -21,12 +21,16 @@ public class BookView {
         System.out.print("Digite o ISBN: ");
         String isbn = scanner.nextLine();
         
-        try {
-            Book book = new Book(title, author, isbn);
-            bookService.addBook(book);
-            System.out.println("Livro cadastrado com sucesso!");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Erro ao cadastrar livro: " + e.getMessage());
+        if(bookService.findBookByIsbn(isbn) == null){
+            try {
+                Book book = new Book(title, author, isbn);
+                bookService.addBook(book);
+                System.out.println("Livro cadastrado com sucesso!");
+            } catch (IllegalArgumentException e) {
+                System.out.println("Erro ao cadastrar livro: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Esse livro já está cadastrado!");
         }
     }
 
