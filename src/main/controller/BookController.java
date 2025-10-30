@@ -32,6 +32,13 @@ public class BookController {
         return null;
     }
 
+    public boolean verifyBookExist(String isbn){
+        if(findBookByIsbn(isbn) != null){
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Remove um livro pelo ISBN.
      * @param isbn
