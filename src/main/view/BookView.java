@@ -21,7 +21,9 @@ public class BookView {
         System.out.print("Digite o ISBN: ");
         String isbn = scanner.nextLine();
         
-        if(bookService.findBookByIsbn(isbn) == null){
+        if(bookService.verifyBookExist(isbn)){
+            System.out.println("Esse livro já está cadastrado!");            
+        } else {
             try {
                 Book book = new Book(title, author, isbn);
                 bookService.addBook(book);
@@ -29,8 +31,6 @@ public class BookView {
             } catch (IllegalArgumentException e) {
                 System.out.println("Erro ao cadastrar livro: " + e.getMessage());
             }
-        } else {
-            System.out.println("Esse livro já está cadastrado!");
         }
     }
 
