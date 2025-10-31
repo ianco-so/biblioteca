@@ -1,18 +1,33 @@
 package main.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import main.model.Author;
 import main.model.Book;
 
-public class BookController {
-    private List<Book> books = new ArrayList<>(); // TODO: talvez seja melhor usar outra estrutura de dados
+import java.util.ArrayList;
+import java.util.List;
 
-    public void addBook(Book book) {
-        if (book == null) {
-            throw new IllegalArgumentException("O livro não pode ser nulo.");
-        }
-        this.books.add(book);
+public class BookController {
+    private final List<Book> books = new ArrayList<>();
+
+
+public Book addBook(String title, String isbn, String authorName, String nationality) {
+    // Validação básica
+    if (title == null || isbn == null || authorName == null || nationality == null) {
+        throw new IllegalArgumentException("Título, ISBN, nome e nacionalidade do autor são obrigatórios.");
     }
+
+    title = title.trim();
+    isbn = isbn.trim();
+    authorName = authorName.trim();
+    nationality = nationality.trim();
+
+    Author author = new Author(authorName, nationality);
+    Book book = new Book(title, author, isbn);
+
+    books.add(book);
+
+    return book;
+}
 
     public List<Book> getAllBooks() {
         return new ArrayList<>(this.books);
