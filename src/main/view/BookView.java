@@ -1,32 +1,34 @@
 package main.view;
 
-import java.util.List;
-import java.util.Scanner;
-
 import main.controller.BookController;
 import main.model.Book;
+
+import java.util.List;
+import java.util.Scanner;
 
 public class BookView {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void cadastrarLivro(BookController bookService) {
         System.out.println("\n--- CADASTRO DE LIVRO ---");
-        
+
         System.out.print("Digite o título: ");
         String title = scanner.nextLine();
-        
-        System.out.print("Digite o autor: ");
-        String author = scanner.nextLine();
-        
+
         System.out.print("Digite o ISBN: ");
         String isbn = scanner.nextLine();
-        
-        if(bookService.verifyBookExist(isbn)){
-            System.out.println("Esse livro já está cadastrado!");            
+
+        System.out.print("Digite o nome do autor: ");
+        String authorName = scanner.nextLine();
+
+        System.out.print("Digite a nacionalidade do autor: ");
+        String nationality = scanner.nextLine();
+
+        if (bookService.verifyBookExist(isbn)) {
+            System.out.println("Esse livro já está cadastrado!");
         } else {
             try {
-                Book book = new Book(title, author, isbn);
-                bookService.addBook(book);
+                bookService.addBook(title, isbn, authorName, nationality);
                 System.out.println("Livro cadastrado com sucesso!");
             } catch (IllegalArgumentException e) {
                 System.out.println("Erro ao cadastrar livro: " + e.getMessage());
