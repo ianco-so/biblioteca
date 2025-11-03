@@ -4,6 +4,8 @@ public class Book {
     private String title;
     private Author author;
     private String isbn;
+    private int numberOfCopies;
+    private boolean digitalAvailability;
     // private Publisher publisher; //TODO: Implementar Publisher
 
 
@@ -26,6 +28,14 @@ public class Book {
 
     public String getIsbn() {
         return this.isbn;
+    }
+
+    public int numberOfCopies(){
+        return this.numberOfCopies;
+    }
+
+    public boolean digitalAvailability(){
+        return this.digitalAvailability;
     }
 
     @Override

@@ -24,11 +24,22 @@ public class BookView {
         System.out.print("Digite a nacionalidade do autor: ");
         String nationality = scanner.nextLine();
 
+        System.out.print("Digite a quantidade cópias do livro: ");
+        int numberOfCopies = scanner.nextInt();
+
+        System.out.print("Se o livro tem versão digital digite qualquer letra ou número, do contrario apenas aperte enter: ");
+        String digitalAvailaString = scanner.next();
+        boolean digitalAvailability = false;
+
+        if(digitalAvailaString != null){
+            digitalAvailability = true;
+        }
+
         if (bookService.verifyBookExist(isbn)) {
             System.out.println("Esse livro já está cadastrado!");
         } else {
             try {
-                bookService.addBook(title, isbn, authorName, nationality);
+                bookService.addBook(title, isbn, authorName, nationality, numberOfCopies, digitalAvailability);
                 System.out.println("Livro cadastrado com sucesso!");
             } catch (IllegalArgumentException e) {
                 System.out.println("Erro ao cadastrar livro: " + e.getMessage());
