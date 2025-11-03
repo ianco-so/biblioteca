@@ -4,13 +4,17 @@ import static main.view.BookView.buscarLivroPorIsbn;
 import static main.view.BookView.cadastrarLivro;
 import static main.view.BookView.listarLivros;
 import static main.view.BookView.removerLivroPorIsbn;
+import static main.view.UserView.cadastrarUsuario;
+import static main.view.UserView.listarUsuarios;
 
 import java.util.Scanner;
 
 import main.controller.BookController;
+import main.controller.UserController;
 
 public class Main {
     private static BookController bookService = new BookController();
+    private static UserController userService = new UserController();
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -37,6 +41,12 @@ public class Main {
                 case 4:
                     removerLivroPorIsbn(bookService);
                     break;
+                case 5:
+                    cadastrarUsuario(userService);
+                    break;
+                case 6:
+                    listarUsuarios(userService);
+                    break;
                 case 0:
                     continuar = false;
                     System.out.println("Obrigado por usar o Sistema de Biblioteca!");
@@ -62,6 +72,8 @@ public class Main {
         System.out.println("2. Listar Livros");
         System.out.println("3. Buscar Livro por ISBN");
         System.out.println("4. Remover Livro por ISBN");
+        System.out.println("5. Cadastrar usuário");
+        System.out.println("6. Listar usuários");
         System.out.println("0. Sair");
         System.out.println("===========================================");
         System.out.print("Escolha uma opção: ");
