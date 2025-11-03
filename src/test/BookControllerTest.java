@@ -34,8 +34,15 @@ public class BookControllerTest {
     public void testAddBook() {
         beforeEach();
         System.out.println("Teste: testAddBook");
+        
+        // String title = "Clean Code";
+        // String isbn = "978-0132350884";
+        // String authorName = "Robert C. Martin";
+        // String nationality = "Norte-americano";
+        int numberOfCopies = 12;
+        boolean digitalAvailability = false;
 
-        controller.addBook("Clean Code", "978-0132350884", "Robert C. Martin", "Norte-americano");
+        controller.addBook("Clean Code", "978-0132350884", "Robert C. Martin", "Norte-americano", 12, false);
 
         List<Book> books = controller.getAllBooks();
 
@@ -43,6 +50,8 @@ public class BookControllerTest {
         assert books.get(0).getTitle().equals("Clean Code") : "Título incorreto";
         assert books.get(0).getAuthor().getName().equals("Robert C. Martin") : "Autor incorreto";
         assert books.get(0).getIsbn().equals("978-0132350884") : "ISBN incorreto";
+        assert books.get(0).getNumberOfCopies() == numberOfCopies : "Quantidade de cópias incorreta";
+        assert books.get(0).getDigitalAvailability() == digitalAvailability : "Disponibilidade incorreta";
 
         System.out.println("  (V) Livro adicionado com sucesso\n");
     }
@@ -52,7 +61,7 @@ public class BookControllerTest {
         System.out.println("Teste: testAddNullBook");
 
         try {
-            controller.addBook(null, "123", "Autor Qualquer", "Brasileira");
+            controller.addBook(null, "123", "Autor Qualquer", "Brasileira", 1, false);
             assert false : "Deveria ter lançado IllegalArgumentException";
         } catch (IllegalArgumentException e) {
             // a mensagem vem do controller atual
@@ -64,8 +73,8 @@ public class BookControllerTest {
         beforeEach();
         System.out.println("Teste: testGetAllBooks");
 
-        controller.addBook("Java Effective", "978-0134685991", "Joshua Bloch", "Norte-americano");
-        controller.addBook("Design Patterns", "978-0201633610", "Gang of Four", "Vários");
+        controller.addBook("Java Effective", "978-0134685991", "Joshua Bloch", "Norte-americano", 10, true);
+        controller.addBook("Design Patterns", "978-0201633610", "Gang of Four", "Vários", 5, true);
 
         List<Book> books = controller.getAllBooks();
 
@@ -80,7 +89,7 @@ public class BookControllerTest {
         beforeEach();
         System.out.println("Teste: testGetAllBooksReturnsNewList");
 
-        controller.addBook("Test Driven Development", "978-0321146533", "Kent Beck", "Norte-americano");
+        controller.addBook("Test Driven Development", "978-0321146533", "Kent Beck", "Norte-americano", 10, false);
 
         List<Book> books1 = controller.getAllBooks();
         List<Book> books2 = controller.getAllBooks();
@@ -95,8 +104,8 @@ public class BookControllerTest {
         beforeEach();
         System.out.println("Teste: testFindBookByIsbn");
 
-        controller.addBook("Refactoring", "978-0201485677", "Martin Fowler", "Britânico");
-        controller.addBook("Code Complete", "978-0735619678", "Steve McConnell", "Norte-americano");
+        controller.addBook("Refactoring", "978-0201485677", "Martin Fowler", "Britânico", 50, true);
+        controller.addBook("Code Complete", "978-0735619678", "Steve McConnell", "Norte-americano", 41, false);
 
         Book found = controller.findBookByIsbn("978-0735619678");
 
@@ -111,7 +120,7 @@ public class BookControllerTest {
         beforeEach();
         System.out.println("Teste: testFindBookByIsbnNotFound");
 
-        controller.addBook("The Pragmatic Programmer", "978-0201616224", "Andrew Hunt", "Norte-americano");
+        controller.addBook("The Pragmatic Programmer", "978-0201616224", "Andrew Hunt", "Norte-americano", 18, false);
 
         Book found = controller.findBookByIsbn("978-9999999999");
 
@@ -124,7 +133,7 @@ public class BookControllerTest {
         beforeEach();
         System.out.println("Teste: testRemoveBookByIsbn");
 
-        controller.addBook("Domain-Driven Design", "978-0321125217", "Eric Evans", "Norte-americano");
+        controller.addBook("Domain-Driven Design", "978-0321125217", "Eric Evans", "Norte-americano", 11, true);
 
         boolean removed = controller.removeBookByIsbn("978-0321125217");
 
@@ -138,7 +147,7 @@ public class BookControllerTest {
         beforeEach();
         System.out.println("Teste: testRemoveBookByIsbnNotFound");
 
-        controller.addBook("Microservices", "978-1491950357", "Sam Newman", "Britânico");
+        controller.addBook("Microservices", "978-1491950357", "Sam Newman", "Britânico", 15, true);
 
         boolean removed = controller.removeBookByIsbn("978-0000000000");
 
@@ -153,7 +162,7 @@ public class BookControllerTest {
         System.out.println("Teste: testAddMultipleBooks");
 
         for (int i = 1; i <= 5; i++) {
-            controller.addBook("Livro " + i, "ISBN-" + i, "Autor " + i, "Brasileiro");
+            controller.addBook("Livro " + i, "ISBN-" + i, "Autor " + i, "Brasileiro", i, true);
         }
 
         List<Book> books = controller.getAllBooks();
@@ -166,9 +175,9 @@ public class BookControllerTest {
         beforeEach();
         System.out.println("Teste: testRemoveFromMultipleBooks");
 
-        controller.addBook("Livro A", "ISBN-A", "Autor A", "BR");
-        controller.addBook("Livro B", "ISBN-B", "Autor B", "BR");
-        controller.addBook("Livro C", "ISBN-C", "Autor C", "BR");
+        controller.addBook("Livro A", "ISBN-A", "Autor A", "BR", 5, true);
+        controller.addBook("Livro B", "ISBN-B", "Autor B", "BR", 5, true);
+        controller.addBook("Livro C", "ISBN-C", "Autor C", "BR", 5, true);
 
         boolean removed = controller.removeBookByIsbn("ISBN-B");
 

@@ -59,11 +59,13 @@ public class BookView {
             
             for (int i = 0; i < books.size(); i++) {
                 Book book = books.get(i);
-                System.out.printf("%d. Título: %-30s Autor: %-20s ISBN: %s%n", 
+                System.out.printf("%d. Título: %-30s Autor: %-20s ISBN: %s%n Número de Cópias: %-20d Está disponível digitalmente: %b", 
                     (i + 1), 
                     book.getTitle(), 
                     book.getAuthor(), 
-                    book.getIsbn()
+                    book.getIsbn(),
+                    book.getNumberOfCopies(),
+                    book.getDigitalAvailability()
                 );
             }
         }

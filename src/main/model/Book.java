@@ -9,13 +9,15 @@ public class Book {
     // private Publisher publisher; //TODO: Implementar Publisher
 
 
-    public Book(String title, Author author, String isbn) {
+    public Book(String title, Author author, String isbn, int numberOfCopies, boolean digitalAvailability) {
         if (title == null || author == null || isbn == null) { // Validação simples // TODO: retirar e usar Lombok
             throw new IllegalArgumentException("Titulo, autor e ISBN não podem ser nulos.");
         }
         this.title = title.trim();
         this.author = author;
         this.isbn = isbn.trim(); //TODO: Validar ISBN
+        this.numberOfCopies = numberOfCopies; //TODO: validar o int do numero de copias
+        this.digitalAvailability = digitalAvailability;
     }
 
     public String getTitle() { //TODO: Retirar. Vamos tentar usar o Lombok
@@ -30,11 +32,11 @@ public class Book {
         return this.isbn;
     }
 
-    public int numberOfCopies(){
+    public int getNumberOfCopies(){
         return this.numberOfCopies;
     }
 
-    public boolean digitalAvailability(){
+    public boolean getDigitalAvailability(){
         return this.digitalAvailability;
     }
 
