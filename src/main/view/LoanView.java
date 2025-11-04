@@ -25,14 +25,29 @@ public class LoanView {
 
             String opt = scanner.nextLine().trim();
             switch (opt) {
-                case "1": emprestarFisico(loanController); break;
-                case "2": emprestarDigital(loanController); break;
-                case "3": devolver(loanController); break;
-                case "4": estenderPrazo(loanController); break;
-                case "5": listarAbertos(loanController); break;
-                case "6": listarDevolvidos(loanController); break;
-                case "7": listarTodos(loanController); break;
-                case "0": return;
+                case "1":
+                    emprestarFisico(loanController);
+                    break;
+                case "2":
+                    emprestarDigital(loanController);
+                    break;
+                case "3":
+                    devolver(loanController);
+                    break;
+                case "4":
+                    estenderPrazo(loanController);
+                    break;
+                case "5":
+                    listarAbertos(loanController);
+                    break;
+                case "6":
+                    listarDevolvidos(loanController);
+                    break;
+                case "7":
+                    listarTodos(loanController);
+                    break;
+                case "0":
+                    return;
                 default: System.out.println("Opção inválida.");
             }
         }
