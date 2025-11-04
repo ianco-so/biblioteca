@@ -20,6 +20,17 @@ public class Book {
         this.digitalAvailability = digitalAvailability;
     }
 
+    public void decrementCopies() {
+        if (numberOfCopies <= 0) {
+            throw new IllegalStateException("Sem cópias físicas disponíveis.");
+        }
+        numberOfCopies--;
+    }
+
+    public void incrementCopies() {
+        numberOfCopies++;
+    }
+
     public String getTitle() { //TODO: Retirar. Vamos tentar usar o Lombok
         return this.title;
     }
