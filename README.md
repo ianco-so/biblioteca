@@ -5,7 +5,9 @@ Este é um projeto da disciplina de Boas Práticas de Programação que implemen
 ## 👥 Equipe
 
 - Ianco Soares Oliveira
+- Ian Lucas Melo Trindade
 - Lucas Oliveira
+
 
 ## 📚 Sobre o Sistema
 
