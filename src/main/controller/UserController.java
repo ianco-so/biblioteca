@@ -1,10 +1,9 @@
 package main.controller;
 
+import main.model.User;
+
 import java.util.ArrayList;
 import java.util.List;
-
-
-import main.model.User;
 
 public class UserController {
     private final List<User> users = new ArrayList<>();
