@@ -1,16 +1,13 @@
 package main;
 
-import static main.view.BookView.buscarLivroPorIsbn;
-import static main.view.BookView.cadastrarLivro;
-import static main.view.BookView.listarLivros;
-import static main.view.BookView.removerLivroPorIsbn;
-import static main.view.UserView.cadastrarUsuario;
-import static main.view.UserView.listarUsuarios;
+import main.controller.BookController;
+import main.controller.UserController;
 
 import java.util.Scanner;
 
-import main.controller.BookController;
-import main.controller.UserController;
+import static main.view.BookView.*;
+import static main.view.UserView.cadastrarUsuario;
+import static main.view.UserView.listarUsuarios;
 
 public class Main {
     private static BookController bookService = new BookController();

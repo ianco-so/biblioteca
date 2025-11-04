@@ -24,14 +24,19 @@ public class BookView {
         System.out.print("Digite a nacionalidade do autor: ");
         String nationality = scanner.nextLine();
 
-        System.out.print("Digite a quantidade cópias do livro: ");
-        int numberOfCopies = scanner.nextInt();
+        System.out.print("Digite a quantidade cópias do livro físico, do contrario apenas aperte enter: ");
+        String copiesStr = scanner.nextLine().trim();
+        int numberOfCopies = 0;
+        if (!copiesStr.isEmpty()){
+            numberOfCopies = Integer.parseInt(copiesStr);
+        }
+
 
         System.out.print("Se o livro tem versão digital digite qualquer letra ou número, do contrario apenas aperte enter: ");
-        String digitalAvailaString = scanner.next();
+        String digitalAvailaString = scanner.nextLine();
         boolean digitalAvailability = false;
 
-        if(digitalAvailaString != null){
+        if(!digitalAvailaString.trim().isEmpty()) {
             digitalAvailability = true;
         }
 
