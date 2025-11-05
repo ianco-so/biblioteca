@@ -4,12 +4,40 @@ import main.controller.BookController;
 import main.model.Book;
 
 import java.util.List;
-import java.util.Scanner;
 
-public class BookView {
-    private static Scanner scanner = new Scanner(System.in);
+public class BookView implements MenuView {
 
-    public static void cadastrarLivro(BookController bookService) {
+    public static void menu(BookController bookService) {
+        var goBack = false;
+
+        while (!goBack) {
+            showMenuOptions();
+            var opcao = MenuView.readOption();
+
+            switch (opcao) {
+                case 1:
+                    createBook(bookService);
+                    break;
+                case 2:
+                    getBooks(bookService);
+                    break;
+                case 3:
+                    getBookByIsbn(bookService);
+                    break;
+                case 4:
+                    removeBookByIsbn(bookService);
+                    break;
+                case 0:
+                    goBack = true;
+                    System.out.println("Voltando ao menu anterior...");
+                    break;
+                default:
+                    System.out.println("Opção inválida! Tente novamente.");
+            }
+        }
+    }
+
+    private static void createBook(BookController bookService) {
         System.out.println("\n--- CADASTRO DE LIVRO ---");
 
         System.out.print("Digite o título: ");
@@ -52,7 +80,7 @@ public class BookView {
         }
     }
 
-    public static void listarLivros(BookController bookService) {
+    private static void getBooks(BookController bookService) {
         System.out.println("\n--- LISTA DE LIVROS CADASTRADOS ---");
         List<Book> books = bookService.getAllBooks();
         
@@ -76,7 +104,7 @@ public class BookView {
         }
     }
 
-    public static void buscarLivroPorIsbn(BookController bookService) {
+    private static void getBookByIsbn(BookController bookService) {
         System.out.println("\n--- BUSCAR LIVRO POR ISBN ---");
         System.out.print("Digite o ISBN do livro: ");
         String isbn = scanner.nextLine();
@@ -93,8 +121,7 @@ public class BookView {
         }
     }
 
-
-    public static void removerLivroPorIsbn(BookController bookService) {
+    private static void removeBookByIsbn(BookController bookService) {
         System.out.println("\n--- REMOVER LIVRO POR ISBN ---");
         System.out.print("Digite o ISBN do livro a ser removido: ");
         String isbn = scanner.nextLine();
@@ -106,5 +133,14 @@ public class BookView {
         } else {
             System.out.println("Livro com ISBN '" + isbn + "' não encontrado. Nenhum livro foi removido.");
         }
+    }
+
+    private static void showMenuOptions() {
+        System.out.println("\n=== MENU DE LIVROS ===");
+        System.out.println("1. Cadastrar Livro");
+        System.out.println("2. Listar Livros");
+        System.out.println("3. Buscar Livro por ISBN");
+        System.out.println("4. Remover Livro por ISBN");
+        System.out.println("0. Voltar");
     }
 }

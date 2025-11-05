@@ -3,13 +3,13 @@ package main;
 import main.controller.BookController;
 import main.controller.LoanController;
 import main.controller.UserController;
+
+import main.view.BookView;
 import main.view.LoanView;
+import main.view.MenuView;
+import main.view.UserView;
 
 import java.util.Scanner;
-
-import static main.view.BookView.*;
-import static main.view.UserView.cadastrarUsuario;
-import static main.view.UserView.listarUsuarios;
 
 public class Main {
     private static BookController bookService = new BookController();
@@ -25,29 +25,17 @@ public class Main {
         boolean continuar = true;
 
         while (continuar) {
-            exibirMenu();
-            int opcao = lerOpcao();
+            showMenu();
+            int option = MenuView.readOption();
 
-            switch (opcao) {
+            switch (option) {
                 case 1:
-                    cadastrarLivro(bookService);
+                    BookView.menu(bookService);
                     break;
                 case 2:
-                    listarLivros(bookService);
-                break;
+                    UserView.menu(userService);
+                    break;
                 case 3:
-                    buscarLivroPorIsbn(bookService);
-                break;
-                case 4:
-                    removerLivroPorIsbn(bookService);
-                    break;
-                case 5:
-                    cadastrarUsuario(userService);
-                    break;
-                case 6:
-                    listarUsuarios(userService);
-                    break;
-                case 7:
                     LoanView.menu(loanService);
                     break;
                 case 0:
@@ -67,27 +55,15 @@ public class Main {
         scanner.close();
     }
 
-    private static void exibirMenu() {
+    private static void showMenu() {
         System.out.println("\n===========================================");
         System.out.println("               MENU PRINCIPAL");
         System.out.println("===========================================");
-        System.out.println("1. Cadastrar Livro");
-        System.out.println("2. Listar Livros");
-        System.out.println("3. Buscar Livro por ISBN");
-        System.out.println("4. Remover Livro por ISBN");
-        System.out.println("5. Cadastrar usuário");
-        System.out.println("6. Listar usuários");
-        System.out.println("7. Empréstimos");
+        System.out.println("1. Livros: ");
+        System.out.println("2. Usuários: ");
+        System.out.println("3. Empréstimos: ");
         System.out.println("0. Sair");
         System.out.println("===========================================");
         System.out.print("Escolha uma opção: ");
-    }
-
-    private static int lerOpcao() {
-        try {
-            return Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            return -1;
-        }
     }
 }

@@ -4,13 +4,33 @@ import main.controller.UserController;
 import main.model.User;
 
 import java.util.List;
-import java.util.Scanner;
 
-public class UserView {
+public class UserView implements MenuView {
 
-    private static Scanner scanner = new Scanner(System.in);
+    public static void menu(UserController userService) {
+        var goBack = false;
 
-    public static void cadastrarUsuario(UserController userService){
+        while (!goBack) {
+            showMenuOptions();
+            var option = MenuView.readOption();
+
+            switch (option) {
+                case 1:
+                    createUser(userService);
+                    break;
+                case 2:
+                    getUsers(userService);
+                    break;
+                case 0:
+                    goBack = true;
+                    break;
+                default:
+                    System.out.println("Opção inválida! Tente novamente.");
+            }
+        }
+    }
+
+    private static void createUser(UserController userService){
         System.out.println("\n--- CADASTRO DE USUÁRIO ---");
 
         System.out.print("Digite o nome do usuário: ");
@@ -31,7 +51,7 @@ public class UserView {
         
     }
 
-    public static void listarUsuarios (UserController userService){
+    private static void getUsers(UserController userService){
         List<User> users = userService.getAllUsers();
 
         if(users.isEmpty()){
@@ -50,5 +70,11 @@ public class UserView {
             }
         }
     }
-    
+
+    private static void showMenuOptions() {
+        System.out.println("\n=== MENU DE USUÁRIOS ===");
+        System.out.println("1. Cadastrar usuário");
+        System.out.println("2. Listar usuários");
+        System.out.println("0. Voltar");
+    }
 }

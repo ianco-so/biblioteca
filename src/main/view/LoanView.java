@@ -5,48 +5,37 @@ import main.model.Loan;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Scanner;
 
-public class LoanView {
-    private static final Scanner scanner = new Scanner(System.in);
+public class LoanView implements MenuView {
 
     public static void menu(LoanController loanController) {
         while (true) {
-            System.out.println("\n=== EMPRÉSTIMOS ===");
-            System.out.println("1. Emprestar LIVRO FÍSICO");
-            System.out.println("2. Emprestar LIVRO DIGITAL");
-            System.out.println("3. Devolver livro");
-            System.out.println("4. Estender prazo");
-            System.out.println("5. Listar empréstimos em ABERTO");
-            System.out.println("6. Listar empréstimos DEVOLVIDOS");
-            System.out.println("7. Listar TODOS (mais recentes primeiro)");
-            System.out.println("0. Voltar");
-            System.out.print("Escolha: ");
+            showMenuOptions();
 
-            String opt = scanner.nextLine().trim();
-            switch (opt) {
-                case "1":
+            var option = MenuView.readOption();
+            switch (option  ) {
+                case 1:
                     emprestarFisico(loanController);
                     break;
-                case "2":
+                case 2:
                     emprestarDigital(loanController);
                     break;
-                case "3":
+                case 3:
                     devolver(loanController);
                     break;
-                case "4":
+                case 4:
                     estenderPrazo(loanController);
                     break;
-                case "5":
+                case 5:
                     listarAbertos(loanController);
                     break;
-                case "6":
+                case 6:
                     listarDevolvidos(loanController);
                     break;
-                case "7":
+                case 7:
                     listarTodos(loanController);
                     break;
-                case "0":
+                case 0:
                     return;
                 default: System.out.println("Opção inválida.");
             }
@@ -125,5 +114,17 @@ public class LoanView {
             return;
         }
         for (Loan l : list) System.out.println(l);
+    }
+
+    private static void showMenuOptions() {
+        System.out.println("\n=== EMPRÉSTIMOS ===");
+        System.out.println("1. Emprestar LIVRO FÍSICO");
+        System.out.println("2. Emprestar LIVRO DIGITAL");
+        System.out.println("3. Devolver livro");
+        System.out.println("4. Estender prazo");
+        System.out.println("5. Listar empréstimos em ABERTO");
+        System.out.println("6. Listar empréstimos DEVOLVIDOS");
+        System.out.println("7. Listar TODOS (mais recentes primeiro)");
+        System.out.println("0. Voltar");
     }
 }
