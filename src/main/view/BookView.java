@@ -9,6 +9,9 @@ import java.util.Scanner;
 public class BookView {
     private static Scanner scanner = new Scanner(System.in);
 
+    // Os dois primeiros ifs me incomodam, mas nao imagino uma boa forma de substitui-los
+    // E a verificacao no terceiro if, antes de entrar no try-catch, nao parece ser adequada faze-la aqui
+    // talvez essa tomada de decisao nao deveria acontecer em um View.
     public static void cadastrarLivro(BookController bookService) {
         System.out.println("\n--- CADASTRO DE LIVRO ---");
 
@@ -76,6 +79,7 @@ public class BookView {
         }
     }
 
+    //Para facilitar a busca de livros, seria interessante tambem buscar livros pro nome ? Mais por comodidade
     public static void buscarLivroPorIsbn(BookController bookService) {
         System.out.println("\n--- BUSCAR LIVRO POR ISBN ---");
         System.out.print("Digite o ISBN do livro: ");

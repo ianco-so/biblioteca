@@ -1,5 +1,9 @@
 package main.model;
 
+
+//No meu entendimento a classe Author nao parece realmente necessaria para o trabalho, uma vez que os
+// requisitos, da minha perspectiva, nao parecem requer sua criacao,
+//mas ela também ja ta aqui.
 public class Author {
     private String name;
     private String nationality;

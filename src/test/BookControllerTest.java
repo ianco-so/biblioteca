@@ -35,6 +35,7 @@ public class BookControllerTest {
         beforeEach();
         System.out.println("Teste: testAddBook");
         
+        //Talvez fosse interessante definir variaveis, como abaixo, para os parametros que serao usados nos testes
         // String title = "Clean Code";
         // String isbn = "978-0132350884";
         // String authorName = "Robert C. Martin";

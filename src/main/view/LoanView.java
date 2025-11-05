@@ -53,6 +53,14 @@ public class LoanView {
         }
     }
 
+    //Talvez por questao de clareza fosse interessante modificar o nome das seguintes funcoes
+    //principalmente adicionando o termo Emprestimo
+    //Uma vez que esse um dos aspectos relevantes na nomeacao de variaveis e funcoes
+    //Ainda falando sobre nomes, talvez tratar os objetos passados como parametro como 'lc'
+    //sejam algo que vai contra esse principio dos nomes, uma vez que nao aparentam estar num contexto
+    //tao simplesmo uma variavel 'i' em for. Mas eu mesmo nao tenho muita certeza nesse ultimo caso.
+
+    //ex: emprestarFisico -> emprestarLivroFisico
     private static void emprestarFisico(LoanController lc) {
         System.out.print("ID do usuário: ");
         String userId = scanner.nextLine().trim();
@@ -73,6 +81,7 @@ public class LoanView {
         if (!ok) System.out.println("Não foi possível realizar o empréstimo digital.");
     }
 
+    //ex: devolver -> devolverLivroFisico
     private static void devolver(LoanController lc) {
         System.out.print("ID do usuário: ");
         String userId = scanner.nextLine().trim();

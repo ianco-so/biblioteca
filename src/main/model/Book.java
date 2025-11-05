@@ -8,7 +8,8 @@ public class Book {
     private boolean digitalAvailability;
     // private Publisher publisher; //TODO: Implementar Publisher
 
-
+    //creio que esse if no construtor de Book faz uma verificacao que deveria ser feita por
+    //outra funcao, no caso isso seria responsabilidade de validar os dados de entrada
     public Book(String title, Author author, String isbn, int numberOfCopies, boolean digitalAvailability) {
         if (title == null || author == null || isbn == null) { // Validação simples // TODO: retirar e usar Lombok
             throw new IllegalArgumentException("Titulo, autor e ISBN não podem ser nulos.");

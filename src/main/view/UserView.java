@@ -10,6 +10,7 @@ public class UserView {
 
     private static Scanner scanner = new Scanner(System.in);
 
+    //Talvez a tomada de decisao desse if-else nao deveria ocorrer aqui
     public static void cadastrarUsuario(UserController userService){
         System.out.println("\n--- CADASTRO DE USUÁRIO ---");
 

@@ -23,7 +23,7 @@ public class Main {
         System.out.println("===========================================");
 
         boolean continuar = true;
-
+        //Adicionar nova opcao que cadastra alguns livros e usuarios automaticamente ?
         while (continuar) {
             exibirMenu();
             int opcao = lerOpcao();

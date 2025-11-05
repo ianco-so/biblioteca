@@ -9,6 +9,7 @@ public class Loan {
     private LocalDate dueDate;
     private LocalDate returnDate;
 
+    //Substituir esse primeiro if por uma funcao de validacao
     public Loan(Book book, User user, LocalDate loanDate, LocalDate dueDate) {
         if (book == null || user == null || loanDate == null || dueDate == null) {
             throw new IllegalArgumentException("Livro, Usuario, Data de emprestimo e Data de devolução não podem ser nulos.");
@@ -47,6 +48,7 @@ public class Loan {
         return returnDate != null;
     }
 
+    //Modificar essa parte do codigo devido a identacao ou modificar a identacao nas funcoes de outras classes
     public Book getBook() { return book; }
     public User getUser() { return user; }
     public LocalDate getLoanDate() { return loanDate; }

@@ -3,7 +3,7 @@ package main.model;
 public class User {
     private String name;
     private String id;
-    private String loanHistory;
+    private String loanHistory;//Talvez trocar essa string por uma lista de Loans
 
     public User(String name, String id){
         this.name = name;
