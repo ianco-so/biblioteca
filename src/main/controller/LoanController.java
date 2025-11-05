@@ -1,6 +1,5 @@
 package main.controller;
 
-import main.model.Book;
 import main.model.Loan;
 import main.model.User;
 
@@ -21,11 +20,12 @@ public class LoanController {
 
     public boolean loanPhysical(String userId, String isbn) {
         User user = userController.findUser(userId);
-        Book book = bookController.findBookByIsbn(isbn);
-        if (user == null || book == null) {
+        var bookOpt = bookController.findByIsbn(isbn);
+        if (user == null || bookOpt.isEmpty()) {
             System.out.println("Usuário ou livro não encontrados.");
             return false;
         }
+        var book = bookOpt.get();
         if (book.getNumberOfCopies() <= 0) {
             System.out.println("Sem cópias físicas disponíveis.");
             return false;
@@ -43,11 +43,12 @@ public class LoanController {
 
     public boolean loanDigital(String userId, String isbn) {
         User user = userController.findUser(userId);
-        Book book = bookController.findBookByIsbn(isbn);
-        if (user == null || book == null) {
+        var bookOpt = bookController.findByIsbn(isbn);
+        if (user == null || bookOpt.isEmpty()) {
             System.out.println("Usuário ou livro não encontrados.");
             return false;
         }
+        var book = bookOpt.get();
         if (!book.getDigitalAvailability()) {
             System.out.println("Este livro não possui versão digital disponível.");
             return false;
@@ -63,11 +64,12 @@ public class LoanController {
 
     public boolean returnBook(String userId, String isbn) {
         User user = userController.findUser(userId);
-        Book book = bookController.findBookByIsbn(isbn);
-        if (user == null || book == null) {
+        var bookOpt = bookController.findByIsbn(isbn);
+        if (user == null || bookOpt.isEmpty()) {
             System.out.println("Usuário ou livro não encontrados.");
             return false;
         }
+        var book = bookOpt.get();
 
         Loan open = null;
         for (Loan l : loans) {
@@ -93,11 +95,12 @@ public class LoanController {
 
     public boolean extendDueDate(String userId, String isbn, LocalDate newDate) {
         User user = userController.findUser(userId);
-        Book book = bookController.findBookByIsbn(isbn);
-        if (user == null || book == null) {
+        var bookOpt = bookController.findByIsbn(isbn);
+        if (user == null || bookOpt.isEmpty()) {
             System.out.println("Usuário ou livro não encontrados.");
             return false;
         }
+        var book = bookOpt.get();
 
         Loan open = null;
         for (Loan l : loans) {

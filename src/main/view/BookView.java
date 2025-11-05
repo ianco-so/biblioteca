@@ -26,11 +26,11 @@ public class BookView {
 
         System.out.print("Digite a quantidade cópias do livro físico, do contrario apenas aperte enter: ");
         String copiesStr = scanner.nextLine().trim();
+
         int numberOfCopies = 0;
         if (!copiesStr.isEmpty()){
             numberOfCopies = Integer.parseInt(copiesStr);
         }
-
 
         System.out.print("Se o livro tem versão digital digite qualquer letra ou número, do contrario apenas aperte enter: ");
         String digitalAvailaString = scanner.nextLine();
@@ -40,7 +40,7 @@ public class BookView {
             digitalAvailability = true;
         }
 
-        if (bookService.verifyBookExist(isbn)) {
+        if (bookService.hasBook(isbn)) {
             System.out.println("Esse livro já está cadastrado!");
         } else {
             try {
@@ -81,13 +81,13 @@ public class BookView {
         System.out.print("Digite o ISBN do livro: ");
         String isbn = scanner.nextLine();
         
-        Book book = bookService.findBookByIsbn(isbn);
+        var book = bookService.findByIsbn(isbn);
         
-        if (book != null) {
+        if (book.isPresent()) {
             System.out.println("Livro encontrado:");
-            System.out.println("  Título: " + book.getTitle());
-            System.out.println("  Autor: " + book.getAuthor());
-            System.out.println("  ISBN: " + book.getIsbn());
+            System.out.println("  Título: " + book.get().getTitle());
+            System.out.println("  Autor: " + book.get().getAuthor());
+            System.out.println("  ISBN: " + book.get().getIsbn());
         } else {
             System.out.println("Livro com ISBN '" + isbn + "' não encontrado.");
         }
@@ -99,7 +99,7 @@ public class BookView {
         System.out.print("Digite o ISBN do livro a ser removido: ");
         String isbn = scanner.nextLine();
         
-        boolean removido = bookService.removeBookByIsbn(isbn);
+        var removido = bookService.removeByIsbn(isbn);
         
         if (removido) {
             System.out.println("Livro removido com sucesso!");
@@ -107,5 +107,4 @@ public class BookView {
             System.out.println("Livro com ISBN '" + isbn + "' não encontrado. Nenhum livro foi removido.");
         }
     }
-    
 }
