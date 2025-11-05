@@ -9,7 +9,7 @@ import java.util.List;
 public class BookController {
     private final List<Book> books = new ArrayList<>();
 
-
+    //Substituir essa validacao basica por uma funcao
     public Book addBook(String title, String isbn, String authorName, String nationality, int numberOfCopies, boolean digitalAvailability) {
         // Validação básica
         if (title == null || isbn == null || authorName == null || nationality == null) {

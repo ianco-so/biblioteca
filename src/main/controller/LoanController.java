@@ -19,6 +19,11 @@ public class LoanController {
         this.userController = userController;
     }
 
+    //Esses dois primeiros ifs talvez devem ser substituidos por outras duas funcoes, 
+    //lembrando, isso e para garantir que cada metodo/classe tem apenas uma responsabilidade
+    //e cumpri apenas ela.
+    //Isso se extende para a mesma verificacao que ocorre nos outros metodos dessa classe.
+    //Alem disso, talvez fosse interessante trocar o nome da variavel 'l'
     public boolean loanPhysical(String userId, String isbn) {
         User user = userController.findUser(userId);
         Book book = bookController.findBookByIsbn(isbn);
