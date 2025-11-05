@@ -39,7 +39,7 @@ public class UserView implements MenuView {
         System.out.print("Digite o ID do usuário: ");
         String id = scanner.nextLine();
 
-        if(userService.findUser(id) != null){
+        if(userService.findById(id).isPresent()){
             System.out.println("\n -- Esse usuário já está cadastrado! -- ");
         } else {
             try{

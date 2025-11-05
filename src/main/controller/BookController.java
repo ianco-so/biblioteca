@@ -70,6 +70,5 @@ public class BookController {
      */
     public boolean removeByIsbn(String isbn) {
         return books.removeIf(book -> book.getIsbn().equals(isbn));
-
     }
 }
