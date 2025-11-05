@@ -5,7 +5,6 @@ import main.model.Loan;
 import main.model.User;
 import main.model.enums.LoanFilter;
 
-import java.lang.foreign.Linker.Option;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -57,67 +56,52 @@ public class LoanController {
         return loan;
     }
 
-    public boolean returnLoanedBook(String userId, String isbn) {
-        var userOpt = userController.findById(userId);
-        var bookOpt = bookController.findByIsbn(isbn);
-        if (userOpt.isEmpty() || bookOpt.isEmpty()) {
-            System.out.println("Usuário ou livro não encontrados.");
-            return false;
-        }
-        var book = bookOpt.get();
-        var user = userOpt.get();
-        Loan open = null;
-        for (Loan l : loans) {
-            if (!l.isReturned() && l.getUser().equals(user) && l.getBook().equals(book)) {
-                open = l;
-                break;
-            }
-        }
-        if (open == null) {
-            System.out.println("Não há empréstimo aberto para esse usuário e livro.");
-            return false;
-        }
-
-        open.returnNow();
-
-        if (!open.getBook().getDigitalAvailability()) {
-            open.getBook().incrementCopies();
-        }
-
-        System.out.println("Livro devolvido com sucesso!");
-        return true;
-    }
-
-    public boolean extendDueDate(String userId, String isbn, LocalDate newDate) {
-        var userOpt = userController.findById(userId);
-        var bookOpt = bookController.findByIsbn(isbn);
-        if (userOpt.isPresent() || bookOpt.isEmpty()) {
-            System.out.println("Usuário ou livro não encontrados.");
-            return false;
-        }
-        var book = bookOpt.get();
-        var user = userOpt.get();
-        Loan open = null;
-        for (Loan l : loans) {
-            if (!l.isReturned() && l.getUser().equals(user) && l.getBook().equals(book)) {
-                open = l;
-                break;
-            }
-        }
-        if (open == null) {
-            System.out.println("Não há empréstimo aberto para esse usuário e livro.");
-            return false;
+    public Optional<Loan> returnLoanedBook(String userId, String isbn) {
+        var openLoan = findOpenLoan(userId, isbn);
+        
+        if (openLoan.isEmpty()) {
+            throw new IllegalStateException("Não há empréstimo aberto para esse usuário e livro.");
         }
 
         try {
-            open.setDueDate(newDate);
-            System.out.println("Prazo estendido para " + newDate + ".");
-            return true;
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            System.out.println("Falha ao estender prazo: " + e.getMessage());
-            return false;
+            openLoan.get().returnNow();
+        } catch (IllegalStateException e) {
+            throw new IllegalStateException("Falha ao devolver livro: " + e.getMessage());
         }
+        
+        var loanedBook = openLoan.get().getBook();
+        if (!loanedBook.getDigitalAvailability()) {
+            loanedBook.incrementCopies();
+        }
+
+        return openLoan;
     }
+
+    public Optional<Loan> extendDueDate(String userId, String isbn, LocalDate newDate) {
+        var openLoan = findOpenLoan(userId, isbn);
+        
+        if (openLoan.isEmpty()) {
+            throw new IllegalStateException("Não há empréstimo aberto para esse usuário e livro.");
+        }
+
+        try {
+            openLoan.get().setDueDate(newDate);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            throw new IllegalStateException("Falha ao estender prazo: " + e.getMessage());
+        }
+        
+        return openLoan;
+    }
+
+    private Optional<Loan> findOpenLoan(String userId, String isbn) {
+        var ub = findUserAndBookOrThrow(userId, isbn);
+        
+        return this.loans.stream()
+            .filter(loan -> !loan.isReturned())
+            .filter(loan -> loan.getUser().equals(ub.user()))
+            .filter(loan -> loan.getBook().equals(ub.book()))
+            .findFirst();
+    }   
 
     public List<Loan> getLoansWithFilter (LoanFilter filter) {
         List<Loan> result = new ArrayList<>();

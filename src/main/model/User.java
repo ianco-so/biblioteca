@@ -55,4 +55,12 @@ public class User {
     public void addLoanToHistory(Loan loan) {
         this.loanHistory.add(loan);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        User other = (User) obj;
+        return id.equals(other.id);
+    }
 }

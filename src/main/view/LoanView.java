@@ -5,6 +5,7 @@ import main.model.Loan;
 import main.model.enums.LoanFilter;
 import main.util.IsbnValidator;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 
 public class LoanView implements MenuView {
@@ -63,9 +64,14 @@ public class LoanView implements MenuView {
         String userId = scanner.nextLine().trim();
         System.out.print("ISBN do livro: ");
         String isbn = scanner.nextLine().trim();
+        isbn = IsbnValidator.getCleanIsbn(isbn);
 
-        boolean ok = lc.returnBook(userId, isbn);
-        if (!ok) System.out.println("Não foi possível devolver (nenhum empréstimo em aberto encontrado?).");
+        try {
+            var returnedLoanOpt = lc.returnLoanedBook(userId, isbn);
+            System.out.println("Livro devolvido com sucesso!\n" + returnedLoanOpt.get());
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Erro ao devolver livro: " + e.getMessage());
+        }
     }
 
     private static void estenderPrazo(LoanController lc) {
@@ -73,15 +79,18 @@ public class LoanView implements MenuView {
         String userId = scanner.nextLine().trim();
         System.out.print("ISBN do livro: ");
         String isbn = scanner.nextLine().trim();
+        isbn = IsbnValidator.getCleanIsbn(isbn);
         System.out.print("Nova data (AAAA-MM-DD): ");
         String dateStr = scanner.nextLine().trim();
 
         try {
             LocalDate newDate = LocalDate.parse(dateStr);
-            boolean ok = lc.extendDueDate(userId, isbn, newDate);
-            if (!ok) System.out.println("Falha ao estender prazo.");
-        } catch (Exception e) {
-            System.out.println("Data inválida. Use o formato AAAA-MM-DD.");
+            var extendedLoan = lc.extendDueDate(userId, isbn, newDate);
+            System.out.println("Prazo estendido com sucesso!\n" + extendedLoan.get());
+        } catch (DateTimeException dte) {
+            System.out.println("Data inválida: " + dte.getMessage());
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Erro ao estender prazo: " + e.getMessage());
         }
     }
 

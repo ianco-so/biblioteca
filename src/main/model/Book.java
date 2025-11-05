@@ -76,4 +76,12 @@ public class Book {
     public String toString() {
         return title + " | " + author + " | " + isbn;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Book other = (Book) obj;
+        return isbn.equals(other.isbn);
+    }
 }
