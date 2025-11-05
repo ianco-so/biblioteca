@@ -18,6 +18,13 @@ public final class IsbnValidator {
         }
     }
 
+    public static String getCleanIsbn(String isbn) {
+        if (isbn == null) {
+            throw new IllegalArgumentException("ISBN não pode ser nulo.");
+        }
+        return isbn.replaceAll("[-\\s]", "");
+    }
+
     private static boolean isValidIsbn10(String isbn) {
         if (!isbn.matches("^[0-9]{9}[0-9X]$")) {
             return false;

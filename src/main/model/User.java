@@ -1,15 +1,18 @@
 package main.model;
 
+import java.util.List;
+
 public class User {
     private String name;
     private String id;
-    // private String loanHistory; //TODO: adicionar historico previamente ou fazer em tempo de execucao
+    private List<Loan> loanHistory;
 
 
     public User(String name, String id) {
         validate(name, id);
         this.name = name;
         this.id = id; 
+        this.loanHistory = List.of();
     }
 
     private static void validate(String name, String id) {
@@ -22,10 +25,10 @@ public class User {
         if (id.trim().isEmpty()) {
             throw new IllegalArgumentException("ID não pode ser vazio.");
         }
-        if (name.trim().length() < 2) {
+        if (name.trim().length() < 3) {
             throw new IllegalArgumentException("Nome muito curto.");
         }
-        if (id.trim().length() < 2) {
+        if (id.trim().length() < 3) {
             throw new IllegalArgumentException("ID muito curto.");
         }
         if (id.trim().length() > 20) {
@@ -42,5 +45,13 @@ public class User {
 
     public String getID() {
         return id;
+    }
+
+    public List<Loan> getLoanHistory() {
+        return List.copyOf(loanHistory);
+    }
+
+    public void addLoanToHistory(Loan loan) {
+        this.loanHistory.add(loan);
     }
 }

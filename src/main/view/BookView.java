@@ -2,8 +2,10 @@ package main.view;
 
 import main.controller.BookController;
 import main.model.Book;
+import main.util.IsbnValidator;
 
 import java.util.List;
+import java.util.Optional;
 
 public class BookView implements MenuView {
 
@@ -43,8 +45,11 @@ public class BookView implements MenuView {
         System.out.print("Digite o título: ");
         String title = scanner.nextLine();
 
-        System.out.print("Digite o ISBN: ");
-        String isbn = scanner.nextLine();
+        Optional<String> isbnOpt = promptForValidIsbn("Digite o ISBN: ");
+        if (isbnOpt.isEmpty()) {
+            return;
+        }
+        String isbn = isbnOpt.get(); 
 
         System.out.print("Digite o nome do autor: ");
         String authorName = scanner.nextLine();
@@ -104,12 +109,34 @@ public class BookView implements MenuView {
         }
     }
 
+    private static Optional<String> promptForValidIsbn(String promptMessage) {
+        System.out.print(promptMessage);
+        String isbn = scanner.nextLine();
+
+        while (!IsbnValidator.isValid(isbn)) {
+            System.out.println("ISBN inválido! Tente novamente ou Digite 'sair' para cancelar.");
+            System.out.print(promptMessage);
+            
+            isbn = scanner.nextLine();
+            
+            if (isbn.equalsIgnoreCase("sair")) {
+                return Optional.empty(); // O usuário cancelou
+            }
+        }
+        
+        // Sucesso! Retorna o ISBN limpo.
+        return Optional.of(IsbnValidator.getCleanIsbn(isbn));
+    }
+
     private static void getBookByIsbn(BookController bookService) {
         System.out.println("\n--- BUSCAR LIVRO POR ISBN ---");
-        System.out.print("Digite o ISBN do livro: ");
-        String isbn = scanner.nextLine();
         
-        var book = bookService.findByIsbn(isbn);
+        var isbnOpt = promptForValidIsbn("Digite o ISBN do livro: ");
+        if (isbnOpt.isEmpty()) {
+            return;
+        }
+        
+        var book = bookService.findByIsbn(isbnOpt.get());
         
         if (book.isPresent()) {
             System.out.println("Livro encontrado:");
@@ -117,14 +144,17 @@ public class BookView implements MenuView {
             System.out.println("  Autor: " + book.get().getAuthor());
             System.out.println("  ISBN: " + book.get().getIsbn());
         } else {
-            System.out.println("Livro com ISBN '" + isbn + "' não encontrado.");
+            System.out.println("Livro com ISBN '" + isbnOpt.get() + "' não encontrado.");
         }
     }
 
     private static void removeBookByIsbn(BookController bookService) {
         System.out.println("\n--- REMOVER LIVRO POR ISBN ---");
-        System.out.print("Digite o ISBN do livro a ser removido: ");
-        String isbn = scanner.nextLine();
+        var isbnOpt = promptForValidIsbn("Digite o ISBN do livro a ser removido: ");
+        if (isbnOpt.isEmpty()) {
+            return;
+        }
+        var isbn = isbnOpt.get();
         
         var removido = bookService.removeByIsbn(isbn);
         

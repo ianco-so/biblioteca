@@ -14,7 +14,7 @@ public class Book {
         validate(title, author, isbn, numberOfCopies);
         this.title = title.trim();
         this.author = author;
-        this.isbn = isbn.trim();
+        this.isbn = IsbnValidator.getCleanIsbn(isbn);
         this.numberOfCopies = numberOfCopies;
         this.digitalAvailability = digitalAvailability;
     }
