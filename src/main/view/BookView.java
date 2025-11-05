@@ -73,15 +73,11 @@ public class BookView implements MenuView {
             digitalAvailability = true;
         }
 
-        if (bookService.hasBook(isbn)) {
-            System.out.println("Esse livro já está cadastrado!");
-        } else {
-            try {
-                bookService.addBook(title, isbn, authorName, nationality, numberOfCopies, digitalAvailability);
-                System.out.println("Livro cadastrado com sucesso!");
-            } catch (IllegalArgumentException e) {
-                System.out.println("Erro ao cadastrar livro: " + e.getMessage());
-            }
+        try {
+            bookService.addBook(title, isbn, authorName, nationality, numberOfCopies, digitalAvailability);
+            System.out.println("Livro cadastrado com sucesso!");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Erro ao cadastrar livro: " + e.getMessage());
         }
     }
 

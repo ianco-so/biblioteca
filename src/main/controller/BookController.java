@@ -33,6 +33,8 @@ public class BookController {
 
         if (!this.hasBook(isbn)) {
             books.add(book);
+        } else {
+            throw new IllegalStateException("Livro com ISBN '" + isbn + "' já existe.");
         }
 
         return book;

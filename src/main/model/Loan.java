@@ -61,11 +61,21 @@ public class Loan {
         return returnDate != null;
     }
 
-    public Book getBook() { return book; }
-    public User getUser() { return user; }
-    public LocalDate getLoanDate() { return loanDate; }
-    public LocalDate getDueDate() { return dueDate; }
-    public LocalDate getReturnDate() { return returnDate; }
+    public Book getBook() { 
+        return book; 
+    }
+    public User getUser() { 
+        return user; 
+    }
+    public LocalDate getLoanDate() { 
+        return loanDate; 
+    }
+    public LocalDate getDueDate() { 
+        return dueDate; 
+    }
+    public LocalDate getReturnDate() { 
+        return returnDate; 
+    }
 
     @Override
     public String toString() {

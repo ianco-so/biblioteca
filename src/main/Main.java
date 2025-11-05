@@ -22,9 +22,9 @@ public class Main {
         System.out.println("   SISTEMA DE BIBLIOTECA - BOAS PRÁTICAS   ");
         System.out.println("===========================================");
 
-        boolean continuar = true;
+        boolean continueLoop = true;
 
-        while (continuar) {
+        while (continueLoop) {
             showMenu();
             int option = MenuView.readOption();
 
@@ -39,14 +39,14 @@ public class Main {
                     LoanView.menu(loanService);
                     break;
                 case 0:
-                    continuar = false;
+                    continueLoop = false;
                     System.out.println("Obrigado por usar o Sistema de Biblioteca!");
                     break;
                 default:
                     System.out.println("Opção inválida! Tente novamente.");
             }
 
-            if (continuar) {
+            if (continueLoop) {
                 System.out.println("\nPressione Enter para continuar...");
                 scanner.nextLine();
             }

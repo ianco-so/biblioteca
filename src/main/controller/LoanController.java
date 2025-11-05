@@ -57,7 +57,7 @@ public class LoanController {
         return loan;
     }
 
-    public boolean returnBook(String userId, String isbn) {
+    public boolean returnLoanedBook(String userId, String isbn) {
         var userOpt = userController.findById(userId);
         var bookOpt = bookController.findByIsbn(isbn);
         if (userOpt.isEmpty() || bookOpt.isEmpty()) {
@@ -119,16 +119,16 @@ public class LoanController {
         }
     }
 
-    public List<Loan> getLoansWithFilter (LoanFilter state) {
+    public List<Loan> getLoansWithFilter (LoanFilter filter) {
         List<Loan> result = new ArrayList<>();
-        if (state == LoanFilter.ALL) {
+        if (filter == LoanFilter.ALL) {
             return getAllLoans();
         }
-        if (state == LoanFilter.OPEN) {
+        if (filter == LoanFilter.OPEN) {
             for (Loan l : loans) {
                 if (!l.isReturned()) result.add(l);
             }
-        } else if (state == LoanFilter.CLOSED) {
+        } else if (filter == LoanFilter.CLOSED) {
             for (Loan l : loans) {
                 if (l.isReturned()) result.add(l);
             }
@@ -139,22 +139,6 @@ public class LoanController {
     public List<Loan> getAllLoans() {
         return new ArrayList<>(loans);
     }
-
-    // public List<Loan> listOpenLoans() {
-    //     List<Loan> result = new ArrayList<>();
-    //     for (Loan l : loans) {
-    //         if (!l.isReturned()) result.add(l);
-    //     }
-    //     return result;
-    // }
-
-    // public List<Loan> listClosedLoans() {
-    //     List<Loan> result = new ArrayList<>();
-    //     for (Loan l : loans) {
-    //         if (l.isReturned()) result.add(l);
-    //     }
-    //     return result;
-    // }
 
     public List<Loan> listLoansSortedByLoanDateDesc() {
         List<Loan> result = getAllLoans();
