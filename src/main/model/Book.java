@@ -1,26 +1,47 @@
 package main.model;
 
+import main.util.IsbnValidator;
+
 public class Book {
     private String title;
     private Author author;
     private String isbn;
     private int numberOfCopies;
     private boolean digitalAvailability;
-    // private Publisher publisher; //TODO: Implementar Publisher
 
 
     public Book(String title, Author author, String isbn, int numberOfCopies, boolean digitalAvailability) {
-        if (title == null || author == null || isbn == null) { // Validação simples // TODO: retirar e usar Lombok
-            throw new IllegalArgumentException("Titulo, autor e ISBN não podem ser nulos.");
-        }
+        validate(title, author, isbn, numberOfCopies);
         this.title = title.trim();
         this.author = author;
-        this.isbn = isbn.trim(); //TODO: Validar ISBN
-        this.numberOfCopies = numberOfCopies; //TODO: validar o int do numero de copias
+        this.isbn = isbn.trim();
+        this.numberOfCopies = numberOfCopies;
         this.digitalAvailability = digitalAvailability;
     }
 
-    public void decrementCopies() {
+    public Book(String title, Author author, String isbn) {
+        this(title, author, isbn, 0, false);
+    }
+
+    private static void validate (String title, Author author, String isbn, int numberOfCopies) {
+        if (title == null || author == null || isbn == null) {
+            throw new IllegalArgumentException("Titulo, autor e ISBN não podem ser nulos.");
+        }
+        if (title.trim().isEmpty()) {
+            throw new IllegalArgumentException("Titulo não pode ser vazio.");
+        }
+        if (isbn.trim().isEmpty()) {
+            throw new IllegalArgumentException("ISBN não pode ser vazio.");
+        }
+        if (numberOfCopies < 0) {
+            throw new IllegalArgumentException("Número de cópias não pode ser negativo.");
+        }
+        if (!IsbnValidator.isValid(isbn)) {
+            throw new IllegalArgumentException("ISBN inválido.");
+        }
+    }
+
+    public void decrementCopies() { //TODO: Será que é necessário lançar uma exceção aqui?
         if (numberOfCopies <= 0) {
             throw new IllegalStateException("Sem cópias físicas disponíveis.");
         }
@@ -31,7 +52,7 @@ public class Book {
         numberOfCopies++;
     }
 
-    public String getTitle() { //TODO: Retirar. Vamos tentar usar o Lombok
+    public String getTitle() {
         return this.title;
     }
 
