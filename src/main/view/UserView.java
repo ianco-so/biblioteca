@@ -21,6 +21,9 @@ public class UserView implements MenuView {
                 case 2:
                     getUsers(userService);
                     break;
+                case 3:
+                    getUserLoanHistory(userService);
+                    break;
                 case 0:
                     goBack = true;
                     break;
@@ -71,10 +74,30 @@ public class UserView implements MenuView {
         }
     }
 
+    private static void getUserLoanHistory(UserController userService) {
+        System.out.print("Digite o ID do usuário: ");
+        String userId = scanner.nextLine().trim();
+
+        try {
+            var loans = userService.getUserLoanHistory(userId);
+            if (loans.isEmpty()) {
+                System.out.println("Nenhum empréstimo encontrado para esse usuário.");
+            } else {
+                System.out.println("Histórico de Empréstimos:");
+                for (var loan : loans) {
+                    System.out.println(loan);
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
     private static void showMenuOptions() {
         System.out.println("\n=== MENU DE USUÁRIOS ===");
         System.out.println("1. Cadastrar usuário");
         System.out.println("2. Listar usuários");
+        System.out.println("3. Ver histórico de empréstimos de um usuário");
         System.out.println("0. Voltar");
     }
 }

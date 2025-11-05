@@ -1,5 +1,6 @@
 package main.controller;
 
+import main.model.Loan;
 import main.model.User;
 
 import java.util.ArrayList;
@@ -40,5 +41,13 @@ public class UserController {
 
     public List<User> getAllUsers(){
         return new ArrayList<> (this.users);
+    }
+
+    public List<Loan> getUserLoanHistory(String userId) {
+        var userOpt = findById(userId);
+        if (userOpt.isEmpty()) {
+            throw new IllegalArgumentException("Usuário não encontrado.");
+        }
+        return userOpt.get().getLoanHistory();
     }
 }

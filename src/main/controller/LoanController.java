@@ -39,7 +39,7 @@ public class LoanController {
 
     public Loan loan(String userId, String isbn, boolean isDigital) {
         var ub = findUserAndBookOrThrow(userId, isbn); 
-        
+
         if (isDigital) {
             if (ub.book().getNumberOfCopies() <= 0) {
                 throw new IllegalStateException("Sem cópias disponíveis.");
@@ -52,6 +52,7 @@ public class LoanController {
         }
             
         var loan = new Loan(ub.book(), ub.user());
+        ub.user().addLoanToHistory(loan);
         loans.add(loan);
         return loan;
     }

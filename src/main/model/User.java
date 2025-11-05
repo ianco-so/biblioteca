@@ -1,5 +1,6 @@
 package main.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
@@ -12,7 +13,7 @@ public class User {
         validate(name, id);
         this.name = name;
         this.id = id; 
-        this.loanHistory = List.of();
+        this.loanHistory = new ArrayList<Loan>();
     }
 
     private static void validate(String name, String id) {
