@@ -2,9 +2,10 @@ package main.view;
 
 import main.controller.LoanController;
 import main.model.Loan;
+import main.model.enums.LoanFilter;
+import main.util.IsbnValidator;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class LoanView implements MenuView {
 
@@ -15,10 +16,10 @@ public class LoanView implements MenuView {
             var option = MenuView.readOption();
             switch (option  ) {
                 case 1:
-                    emprestarFisico(loanController);
+                    emprestar(loanController, false);
                     break;
                 case 2:
-                    emprestarDigital(loanController);
+                    emprestar(loanController, true);
                     break;
                 case 3:
                     devolver(loanController);
@@ -27,13 +28,13 @@ public class LoanView implements MenuView {
                     estenderPrazo(loanController);
                     break;
                 case 5:
-                    listarAbertos(loanController);
+                    listarEmprestimos(loanController, LoanFilter.OPEN);
                     break;
                 case 6:
-                    listarDevolvidos(loanController);
+                    listarEmprestimos(loanController, LoanFilter.CLOSED);
                     break;
                 case 7:
-                    listarTodos(loanController);
+                    listarEmprestimos(loanController, LoanFilter.ALL);
                     break;
                 case 0:
                     return;
@@ -42,24 +43,19 @@ public class LoanView implements MenuView {
         }
     }
 
-    private static void emprestarFisico(LoanController lc) {
+    private static void emprestar(LoanController lc, boolean isDigital) {
         System.out.print("ID do usuário: ");
         String userId = scanner.nextLine().trim();
         System.out.print("ISBN do livro: ");
         String isbn = scanner.nextLine().trim();
+        isbn = IsbnValidator.getCleanIsbn(isbn);
 
-        boolean ok = lc.loanPhysical(userId, isbn);
-        if (!ok) System.out.println("Não foi possível realizar o empréstimo físico.");
-    }
-
-    private static void emprestarDigital(LoanController lc) {
-        System.out.print("ID do usuário: ");
-        String userId = scanner.nextLine().trim();
-        System.out.print("ISBN do livro: ");
-        String isbn = scanner.nextLine().trim();
-
-        boolean ok = lc.loanDigital(userId, isbn);
-        if (!ok) System.out.println("Não foi possível realizar o empréstimo digital.");
+        try {
+            var loan = lc.loan(userId, isbn, isDigital);
+            System.out.println("Empréstimo efetivado!\n" + loan);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Erro ao realizar empréstimo: " + e.getMessage());
+        }
     }
 
     private static void devolver(LoanController lc) {
@@ -89,31 +85,13 @@ public class LoanView implements MenuView {
         }
     }
 
-    private static void listarAbertos(LoanController lc) {
-        List<Loan> list = lc.listOpenLoans();
-        if (list.isEmpty()) {
-            System.out.println("Nenhum empréstimo em aberto.");
+    private static void listarEmprestimos (LoanController lc, LoanFilter filter) {
+        var laons = lc.getLoansWithFilter(filter);
+        if (laons.isEmpty()) {
+            System.out.println("Nenhum empréstimo encontrado para o filtro selecionado.");
             return;
         }
-        for (Loan l : list) System.out.println(l);
-    }
-
-    private static void listarDevolvidos(LoanController lc) {
-        List<Loan> list = lc.listClosedLoans();
-        if (list.isEmpty()) {
-            System.out.println("Nenhum empréstimo devolvido.");
-            return;
-        }
-        for (Loan l : list) System.out.println(l);
-    }
-
-    private static void listarTodos(LoanController lc) {
-        List<Loan> list = lc.listLoansSortedByLoanDateDesc();
-        if (list.isEmpty()) {
-            System.out.println("Nenhum empréstimo registrado.");
-            return;
-        }
-        for (Loan l : list) System.out.println(l);
+        for (Loan l : laons) System.out.println(l);
     }
 
     private static void showMenuOptions() {

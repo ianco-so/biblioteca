@@ -1,11 +1,16 @@
 package main.controller;
 
+import main.model.Book;
 import main.model.Loan;
+import main.model.User;
+import main.model.enums.LoanFilter;
 
+import java.lang.foreign.Linker.Option;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class LoanController {
     private BookController bookController;
@@ -17,50 +22,38 @@ public class LoanController {
         this.userController = userController;
     }
 
-    public boolean loanPhysical(String userId, String isbn) {
+    private record UserAndBook(User user, Book book) {}
+
+    private UserAndBook findUserAndBookOrThrow(String userId, String isbn) {
         var userOpt = userController.findById(userId);
         var bookOpt = bookController.findByIsbn(isbn);
-        if (userOpt.isEmpty() || bookOpt.isEmpty()) {
-            System.out.println("Usuário ou livro não encontrados.");
-            return false;
+        
+        if (userOpt.isEmpty()) {
+            throw new IllegalArgumentException("Usuário não encontrado.");
         }
-        var book = bookOpt.get();
-        var user = userOpt.get();
-        if (book.getNumberOfCopies() <= 0) {
-            System.out.println("Sem cópias físicas disponíveis.");
-            return false;
+        if (bookOpt.isEmpty()) {
+            throw new IllegalArgumentException("Livro não encontrado.");
         }
-
-        LocalDate now = LocalDate.now();
-        Loan loan = new Loan(book, user, now, now.plusDays(14));
-        loans.add(loan);
-
-        book.decrementCopies();
-
-        System.out.println("Empréstimo FÍSICO criado com sucesso!");
-        return true;
+        return new UserAndBook(userOpt.get(), bookOpt.get());
     }
 
-    public boolean loanDigital(String userId, String isbn) {
-        var userOpt = userController.findById(userId);
-        var bookOpt = bookController.findByIsbn(isbn);
-        if (userOpt.isEmpty() || bookOpt.isEmpty()) {
-            System.out.println("Usuário ou livro não encontrados.");
-            return false;
+    public Loan loan(String userId, String isbn, boolean isDigital) {
+        var ub = findUserAndBookOrThrow(userId, isbn); 
+        
+        if (isDigital) {
+            if (ub.book().getNumberOfCopies() <= 0) {
+                throw new IllegalStateException("Sem cópias disponíveis.");
+            }
+        } else {
+            if (!ub.book().getDigitalAvailability()) {
+                throw new IllegalStateException("Este livro não possui versão digital disponível.");
+            }
+            ub.book().decrementCopies();
         }
-        var user = userOpt.get();
-        var book = bookOpt.get();
-        if (!book.getDigitalAvailability()) {
-            System.out.println("Este livro não possui versão digital disponível.");
-            return false;
-        }
-
-        LocalDate now = LocalDate.now();
-        Loan loan = new Loan(book, user, now, now.plusDays(14));
+            
+        var loan = new Loan(ub.book(), ub.user());
         loans.add(loan);
-
-        System.out.println("Empréstimo DIGITAL criado com sucesso!");
-        return true;
+        return loan;
     }
 
     public boolean returnBook(String userId, String isbn) {
@@ -125,25 +118,42 @@ public class LoanController {
         }
     }
 
+    public List<Loan> getLoansWithFilter (LoanFilter state) {
+        List<Loan> result = new ArrayList<>();
+        if (state == LoanFilter.ALL) {
+            return getAllLoans();
+        }
+        if (state == LoanFilter.OPEN) {
+            for (Loan l : loans) {
+                if (!l.isReturned()) result.add(l);
+            }
+        } else if (state == LoanFilter.CLOSED) {
+            for (Loan l : loans) {
+                if (l.isReturned()) result.add(l);
+            }
+        }
+        return result;
+    }
+
     public List<Loan> getAllLoans() {
         return new ArrayList<>(loans);
     }
 
-    public List<Loan> listOpenLoans() {
-        List<Loan> result = new ArrayList<>();
-        for (Loan l : loans) {
-            if (!l.isReturned()) result.add(l);
-        }
-        return result;
-    }
+    // public List<Loan> listOpenLoans() {
+    //     List<Loan> result = new ArrayList<>();
+    //     for (Loan l : loans) {
+    //         if (!l.isReturned()) result.add(l);
+    //     }
+    //     return result;
+    // }
 
-    public List<Loan> listClosedLoans() {
-        List<Loan> result = new ArrayList<>();
-        for (Loan l : loans) {
-            if (l.isReturned()) result.add(l);
-        }
-        return result;
-    }
+    // public List<Loan> listClosedLoans() {
+    //     List<Loan> result = new ArrayList<>();
+    //     for (Loan l : loans) {
+    //         if (l.isReturned()) result.add(l);
+    //     }
+    //     return result;
+    // }
 
     public List<Loan> listLoansSortedByLoanDateDesc() {
         List<Loan> result = getAllLoans();
