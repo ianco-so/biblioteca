@@ -7,8 +7,9 @@ public class IsbnValidatorTest {
     public static void main(String[] args) {
         IsbnValidatorTest test = new IsbnValidatorTest();
         
-        System.out.println("=== Testes do IsbnValidator() ===\n");
+        System.out.println("=== Testes do IsbnValidator ===");
         
+        System.out.println("\n\t\tisValid()");
         test.testIsValidWithValidIsbn10();
         test.testIsValidWithInvalidIsbn10();
         test.testIsValidWithValidIsbn13();
@@ -19,6 +20,7 @@ public class IsbnValidatorTest {
         test.testIsValidWithInvalidLength();
         test.testIsValidWithLetters();
         
+        System.out.println("\n\t\tgetCleanIsbn()");
         test.testGetCleanIsbn();
         test.testGetCleanIsbnWithNull();
 
