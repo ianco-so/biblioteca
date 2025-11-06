@@ -21,6 +21,7 @@ public class Main {
     public static void main(String[] args) {
 
         if (shouldLoadSeedData(args)) {
+            System.out.println("Carregando dados de exemplo...");
             DatabaseSeeder seeder = new DatabaseSeeder(bookService, userService, loanService);
             seeder.seed();
         }
@@ -72,7 +73,7 @@ public class Main {
                 return true;
             }
         }
-        
+
         return false;
     }
 
