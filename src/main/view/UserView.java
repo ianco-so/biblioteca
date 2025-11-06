@@ -4,13 +4,36 @@ import main.controller.UserController;
 import main.model.User;
 
 import java.util.List;
-import java.util.Scanner;
 
-public class UserView {
+public class UserView implements MenuView {
 
-    private static Scanner scanner = new Scanner(System.in);
+    public static void menu(UserController userService) {
+        var goBack = false;
 
-    public static void cadastrarUsuario(UserController userService){
+        while (!goBack) {
+            showMenuOptions();
+            var option = MenuView.readOption();
+
+            switch (option) {
+                case 1:
+                    createUser(userService);
+                    break;
+                case 2:
+                    getUsers(userService);
+                    break;
+                case 3:
+                    getUserLoanHistory(userService);
+                    break;
+                case 0:
+                    goBack = true;
+                    break;
+                default:
+                    System.out.println("Opção inválida! Tente novamente.");
+            }
+        }
+    }
+
+    private static void createUser(UserController userService){
         System.out.println("\n--- CADASTRO DE USUÁRIO ---");
 
         System.out.print("Digite o nome do usuário: ");
@@ -19,7 +42,7 @@ public class UserView {
         System.out.print("Digite o ID do usuário: ");
         String id = scanner.nextLine();
 
-        if(userService.findUser(id) != null){
+        if(userService.findById(id).isPresent()){
             System.out.println("\n -- Esse usuário já está cadastrado! -- ");
         } else {
             try{
@@ -31,7 +54,7 @@ public class UserView {
         
     }
 
-    public static void listarUsuarios (UserController userService){
+    private static void getUsers(UserController userService){
         List<User> users = userService.getAllUsers();
 
         if(users.isEmpty()){
@@ -50,5 +73,31 @@ public class UserView {
             }
         }
     }
-    
+
+    private static void getUserLoanHistory(UserController userService) {
+        System.out.print("Digite o ID do usuário: ");
+        String userId = scanner.nextLine().trim();
+
+        try {
+            var loans = userService.getUserLoanHistory(userId);
+            if (loans.isEmpty()) {
+                System.out.println("Nenhum empréstimo encontrado para esse usuário.");
+            } else {
+                System.out.println("Histórico de Empréstimos:");
+                for (var loan : loans) {
+                    System.out.println(loan);
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
+    private static void showMenuOptions() {
+        System.out.println("\n=== MENU DE USUÁRIOS ===");
+        System.out.println("1. Cadastrar usuário");
+        System.out.println("2. Listar usuários");
+        System.out.println("3. Ver histórico de empréstimos de um usuário");
+        System.out.println("0. Voltar");
+    }
 }

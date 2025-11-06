@@ -1,26 +1,66 @@
 package main.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     private String name;
     private String id;
-    private String loanHistory;
+    private List<Loan> loanHistory;
 
-    public User(String name, String id){
+
+    public User(String name, String id) {
+        validate(name, id);
         this.name = name;
-        this.id = id;
-        this.loanHistory = null; //TODO: adicionar historico previamente ou fazer em tempo de execucao
+        this.id = id; 
+        this.loanHistory = new ArrayList<Loan>();
     }
 
-    public String getName(){
+    private static void validate(String name, String id) {
+        if (name == null || id == null) {
+            throw new IllegalArgumentException("Nome e ID não podem ser nulos.");
+        }
+        if (name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome não pode ser vazio.");
+        }
+        if (id.trim().isEmpty()) {
+            throw new IllegalArgumentException("ID não pode ser vazio.");
+        }
+        if (name.trim().length() < 3) {
+            throw new IllegalArgumentException("Nome muito curto.");
+        }
+        if (id.trim().length() < 3) {
+            throw new IllegalArgumentException("ID muito curto.");
+        }
+        if (id.trim().length() > 20) {
+            throw new IllegalArgumentException("ID muito longo.");
+        }
+        if (!id.matches("^[a-zA-Z0-9]+$")) {
+            throw new IllegalArgumentException("ID deve ser alfanumérico.");
+        }
+    }    
+
+    public String getName() {
         return name;
     }
 
-    public String getID(){
+    public String getID() {
         return id;
     }
 
-    public String getLoanHistory(){
-        return loanHistory;
+    public List<Loan> getLoanHistory() {
+        return List.copyOf(loanHistory);
     }
 
+    public void addLoanToHistory(Loan loan) {
+        this.loanHistory.add(loan);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        User other = (User) obj;
+        return id.equals(other.id);
+    }
 }

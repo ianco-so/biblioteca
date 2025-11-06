@@ -3,24 +3,38 @@ package main.model;
 import java.time.LocalDate;
 
 public class Loan {
+    private static final int DEFAULT_LOAN_PERIOD_DAYS = 14;
+    private static final int MAX_LOAN_PERIOD_DAYS = 60;
+
     private Book book;
     private User user;
     private LocalDate loanDate;
     private LocalDate dueDate;
-    private LocalDate returnDate;
+    private LocalDate returnDate; // null se não devolvido ainda
 
     public Loan(Book book, User user, LocalDate loanDate, LocalDate dueDate) {
+        validate(book, user, loanDate, dueDate);
+        this.book = book;
+        this.user = user;
+        this.loanDate = loanDate;
+        this.dueDate = dueDate;
+        this.returnDate = null;
+    }
+
+    public Loan(Book book, User user) {
+        this(book, user, LocalDate.now(), LocalDate.now().plusDays(DEFAULT_LOAN_PERIOD_DAYS));
+    }
+
+    private static void validate (Book book, User user, LocalDate loanDate, LocalDate dueDate) {
         if (book == null || user == null || loanDate == null || dueDate == null) {
             throw new IllegalArgumentException("Livro, Usuario, Data de emprestimo e Data de devolução não podem ser nulos.");
         }
         if (dueDate.isBefore(loanDate)){
             throw new IllegalArgumentException("A data de devolução não pode ser antes da data de emprestimo");
         }
-        this.book = book;
-        this.user = user;
-        this.loanDate = loanDate;
-        this.dueDate = dueDate;
-        this.returnDate = null;
+        if (dueDate.isAfter(loanDate.plusDays(MAX_LOAN_PERIOD_DAYS))) {
+            throw new IllegalArgumentException("O período máximo de empréstimo é de " + MAX_LOAN_PERIOD_DAYS + " dias.");
+        }
     }
 
     public void returnNow(){
@@ -47,11 +61,21 @@ public class Loan {
         return returnDate != null;
     }
 
-    public Book getBook() { return book; }
-    public User getUser() { return user; }
-    public LocalDate getLoanDate() { return loanDate; }
-    public LocalDate getDueDate() { return dueDate; }
-    public LocalDate getReturnDate() { return returnDate; }
+    public Book getBook() { 
+        return book; 
+    }
+    public User getUser() { 
+        return user; 
+    }
+    public LocalDate getLoanDate() { 
+        return loanDate; 
+    }
+    public LocalDate getDueDate() { 
+        return dueDate; 
+    }
+    public LocalDate getReturnDate() { 
+        return returnDate; 
+    }
 
     @Override
     public String toString() {

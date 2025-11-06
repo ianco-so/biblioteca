@@ -3,13 +3,14 @@ package main;
 import main.controller.BookController;
 import main.controller.LoanController;
 import main.controller.UserController;
+import main.util.DatabaseSeeder;
+
+import main.view.BookView;
 import main.view.LoanView;
+import main.view.MenuView;
+import main.view.UserView;
 
 import java.util.Scanner;
-
-import static main.view.BookView.*;
-import static main.view.UserView.cadastrarUsuario;
-import static main.view.UserView.listarUsuarios;
 
 public class Main {
     private static BookController bookService = new BookController();
@@ -18,47 +19,42 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+
+        if (shouldLoadSeedData(args)) {
+            System.out.println("Carregando dados de exemplo...");
+            DatabaseSeeder seeder = new DatabaseSeeder(bookService, userService, loanService);
+            seeder.seed();
+        }
+        
         System.out.println("===========================================");
         System.out.println("   SISTEMA DE BIBLIOTECA - BOAS PRÁTICAS   ");
         System.out.println("===========================================");
 
-        boolean continuar = true;
+        boolean continueLoop = true;
 
-        while (continuar) {
-            exibirMenu();
-            int opcao = lerOpcao();
+        while (continueLoop) {
+            showMenu();
+            int option = MenuView.readOption();
 
-            switch (opcao) {
+            switch (option) {
                 case 1:
-                    cadastrarLivro(bookService);
+                    BookView.menu(bookService);
                     break;
                 case 2:
-                    listarLivros(bookService);
-                break;
+                    UserView.menu(userService);
+                    break;
                 case 3:
-                    buscarLivroPorIsbn(bookService);
-                break;
-                case 4:
-                    removerLivroPorIsbn(bookService);
-                    break;
-                case 5:
-                    cadastrarUsuario(userService);
-                    break;
-                case 6:
-                    listarUsuarios(userService);
-                    break;
-                case 7:
                     LoanView.menu(loanService);
                     break;
                 case 0:
-                    continuar = false;
+                    continueLoop = false;
                     System.out.println("Obrigado por usar o Sistema de Biblioteca!");
                     break;
                 default:
                     System.out.println("Opção inválida! Tente novamente.");
             }
 
-            if (continuar) {
+            if (continueLoop) {
                 System.out.println("\nPressione Enter para continuar...");
                 scanner.nextLine();
             }
@@ -67,27 +63,29 @@ public class Main {
         scanner.close();
     }
 
-    private static void exibirMenu() {
+    private static boolean shouldLoadSeedData(String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+        
+        for (String arg : args) {
+            if (arg.equals("--seed") || arg.equals("-s")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void showMenu() {
         System.out.println("\n===========================================");
         System.out.println("               MENU PRINCIPAL");
         System.out.println("===========================================");
-        System.out.println("1. Cadastrar Livro");
-        System.out.println("2. Listar Livros");
-        System.out.println("3. Buscar Livro por ISBN");
-        System.out.println("4. Remover Livro por ISBN");
-        System.out.println("5. Cadastrar usuário");
-        System.out.println("6. Listar usuários");
-        System.out.println("7. Empréstimos");
+        System.out.println("1. Livros: ");
+        System.out.println("2. Usuários: ");
+        System.out.println("3. Empréstimos: ");
         System.out.println("0. Sair");
         System.out.println("===========================================");
         System.out.print("Escolha uma opção: ");
-    }
-
-    private static int lerOpcao() {
-        try {
-            return Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            return -1;
-        }
     }
 }

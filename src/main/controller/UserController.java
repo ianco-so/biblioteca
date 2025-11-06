@@ -1,43 +1,53 @@
 package main.controller;
 
+import main.model.Loan;
 import main.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserController {
     private final List<User> users = new ArrayList<>();
-
+    
+    /**
+     * Registra um novo usuário. Caso o ID já exista, não registra novamente.
+     * @param name
+     * @param id
+     * @return Usuário registrado ou existente
+     * @throws IllegalArgumentException
+     */
     public User registerUser(String name, String id){
-        if(name == null || id == null){
-            throw new IllegalArgumentException("Nome e ID do usuário são campos obrigatórios.");
-        }
-
-        name = name.trim();
-        id = id.trim();
-
         User user = new User(name, id);
-        if(findUser(id) == null){
-            users.add(user);
-        } else {
-            return null;
+        if(!this.findById(id).isPresent()){
+            this.users.add(user);
         }
        
         return user;
     }
 
-    public User findUser(String id){
-        for(User user: users){
-            if(user.getID().equals(id)){
-                return user;
-            }
-        }
-        return null;
+    /**
+     * Registra um novo usuário. Caso o ID já exista, não registra novamente.
+     * @param name
+     * @param id
+     * @return Usuário registrado ou existente
+     * @throws IllegalArgumentException
+     */
+    public Optional<User> findById(String id){
+        return this.users.stream()
+                        .filter(user -> user.getID().equals(id))
+                        .findFirst();
     }
 
     public List<User> getAllUsers(){
         return new ArrayList<> (this.users);
     }
 
-
+    public List<Loan> getUserLoanHistory(String userId) {
+        var userOpt = findById(userId);
+        if (userOpt.isEmpty()) {
+            throw new IllegalArgumentException("Usuário não encontrado.");
+        }
+        return userOpt.get().getLoanHistory();
+    }
 }

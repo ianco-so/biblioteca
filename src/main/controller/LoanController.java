@@ -3,11 +3,13 @@ package main.controller;
 import main.model.Book;
 import main.model.Loan;
 import main.model.User;
+import main.model.enums.LoanFilter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class LoanController {
     private BookController bookController;
@@ -19,126 +21,107 @@ public class LoanController {
         this.userController = userController;
     }
 
-    public boolean loanPhysical(String userId, String isbn) {
-        User user = userController.findUser(userId);
-        Book book = bookController.findBookByIsbn(isbn);
-        if (user == null || book == null) {
-            System.out.println("Usuário ou livro não encontrados.");
-            return false;
+    private record UserAndBook(User user, Book book) {}
+
+    private UserAndBook findUserAndBookOrThrow(String userId, String isbn) {
+        var userOpt = userController.findById(userId);
+        var bookOpt = bookController.findByIsbn(isbn);
+        
+        if (userOpt.isEmpty()) {
+            throw new IllegalArgumentException("Usuário não encontrado.");
         }
-        if (book.getNumberOfCopies() <= 0) {
-            System.out.println("Sem cópias físicas disponíveis.");
-            return false;
+        if (bookOpt.isEmpty()) {
+            throw new IllegalArgumentException("Livro não encontrado.");
         }
-
-        LocalDate now = LocalDate.now();
-        Loan loan = new Loan(book, user, now, now.plusDays(14));
-        loans.add(loan);
-
-        book.decrementCopies();
-
-        System.out.println("Empréstimo FÍSICO criado com sucesso!");
-        return true;
+        return new UserAndBook(userOpt.get(), bookOpt.get());
     }
 
-    public boolean loanDigital(String userId, String isbn) {
-        User user = userController.findUser(userId);
-        Book book = bookController.findBookByIsbn(isbn);
-        if (user == null || book == null) {
-            System.out.println("Usuário ou livro não encontrados.");
-            return false;
-        }
-        if (!book.getDigitalAvailability()) {
-            System.out.println("Este livro não possui versão digital disponível.");
-            return false;
-        }
+    public Loan loan(String userId, String isbn, boolean isDigital) {
+        var ub = findUserAndBookOrThrow(userId, isbn);
 
-        LocalDate now = LocalDate.now();
-        Loan loan = new Loan(book, user, now, now.plusDays(14));
-        loans.add(loan);
-
-        System.out.println("Empréstimo DIGITAL criado com sucesso!");
-        return true;
-    }
-
-    public boolean returnBook(String userId, String isbn) {
-        User user = userController.findUser(userId);
-        Book book = bookController.findBookByIsbn(isbn);
-        if (user == null || book == null) {
-            System.out.println("Usuário ou livro não encontrados.");
-            return false;
-        }
-
-        Loan open = null;
-        for (Loan l : loans) {
-            if (!l.isReturned() && l.getUser().equals(user) && l.getBook().equals(book)) {
-                open = l;
-                break;
+        if (!isDigital) {
+            if (ub.book().getNumberOfCopies() <= 0) {
+                throw new IllegalStateException("Sem cópias disponíveis.");
             }
+        } else {
+            if (!ub.book().getDigitalAvailability()) {
+                throw new IllegalStateException("Este livro não possui versão digital disponível.");
+            }
+            ub.book().decrementCopies();
         }
-        if (open == null) {
-            System.out.println("Não há empréstimo aberto para esse usuário e livro.");
-            return false;
-        }
-
-        open.returnNow();
-
-        if (!open.getBook().getDigitalAvailability()) {
-            open.getBook().incrementCopies();
-        }
-
-        System.out.println("Livro devolvido com sucesso!");
-        return true;
+            
+        var loan = new Loan(ub.book(), ub.user());
+        ub.user().addLoanToHistory(loan);
+        loans.add(loan);
+        return loan;
     }
 
-    public boolean extendDueDate(String userId, String isbn, LocalDate newDate) {
-        User user = userController.findUser(userId);
-        Book book = bookController.findBookByIsbn(isbn);
-        if (user == null || book == null) {
-            System.out.println("Usuário ou livro não encontrados.");
-            return false;
-        }
-
-        Loan open = null;
-        for (Loan l : loans) {
-            if (!l.isReturned() && l.getUser().equals(user) && l.getBook().equals(book)) {
-                open = l;
-                break;
-            }
-        }
-        if (open == null) {
-            System.out.println("Não há empréstimo aberto para esse usuário e livro.");
-            return false;
+    public Optional<Loan> returnLoanedBook(String userId, String isbn) {
+        var openLoan = findOpenLoan(userId, isbn);
+        
+        if (openLoan.isEmpty()) {
+            throw new IllegalStateException("Não há empréstimo aberto para esse usuário e livro.");
         }
 
         try {
-            open.setDueDate(newDate);
-            System.out.println("Prazo estendido para " + newDate + ".");
-            return true;
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            System.out.println("Falha ao estender prazo: " + e.getMessage());
-            return false;
+            openLoan.get().returnNow();
+        } catch (IllegalStateException e) {
+            throw new IllegalStateException("Falha ao devolver livro: " + e.getMessage());
         }
+        
+        var loanedBook = openLoan.get().getBook();
+        if (!loanedBook.getDigitalAvailability()) {
+            loanedBook.incrementCopies();
+        }
+
+        return openLoan;
+    }
+
+    public Optional<Loan> extendDueDate(String userId, String isbn, LocalDate newDate) {
+        var openLoan = findOpenLoan(userId, isbn);
+        
+        if (openLoan.isEmpty()) {
+            throw new IllegalStateException("Não há empréstimo aberto para esse usuário e livro.");
+        }
+
+        try {
+            openLoan.get().setDueDate(newDate);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            throw new IllegalStateException("Falha ao estender prazo: " + e.getMessage());
+        }
+        
+        return openLoan;
+    }
+
+    private Optional<Loan> findOpenLoan(String userId, String isbn) {
+        var ub = findUserAndBookOrThrow(userId, isbn);
+        
+        return this.loans.stream()
+            .filter(loan -> !loan.isReturned())
+            .filter(loan -> loan.getUser().equals(ub.user()))
+            .filter(loan -> loan.getBook().equals(ub.book()))
+            .findFirst();
+    }   
+
+    public List<Loan> getLoansWithFilter (LoanFilter filter) {
+        List<Loan> result = new ArrayList<>();
+        if (filter == LoanFilter.ALL) {
+            return getAllLoans();
+        }
+        if (filter == LoanFilter.OPEN) {
+            for (Loan l : loans) {
+                if (!l.isReturned()) result.add(l);
+            }
+        } else if (filter == LoanFilter.CLOSED) {
+            for (Loan l : loans) {
+                if (l.isReturned()) result.add(l);
+            }
+        }
+        return result;
     }
 
     public List<Loan> getAllLoans() {
         return new ArrayList<>(loans);
-    }
-
-    public List<Loan> listOpenLoans() {
-        List<Loan> result = new ArrayList<>();
-        for (Loan l : loans) {
-            if (!l.isReturned()) result.add(l);
-        }
-        return result;
-    }
-
-    public List<Loan> listClosedLoans() {
-        List<Loan> result = new ArrayList<>();
-        for (Loan l : loans) {
-            if (l.isReturned()) result.add(l);
-        }
-        return result;
     }
 
     public List<Loan> listLoansSortedByLoanDateDesc() {

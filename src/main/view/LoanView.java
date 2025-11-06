@@ -2,75 +2,61 @@ package main.view;
 
 import main.controller.LoanController;
 import main.model.Loan;
+import main.model.enums.LoanFilter;
+import main.util.IsbnValidator;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Scanner;
 
-public class LoanView {
-    private static final Scanner scanner = new Scanner(System.in);
+public class LoanView implements MenuView {
 
     public static void menu(LoanController loanController) {
         while (true) {
-            System.out.println("\n=== EMPRÉSTIMOS ===");
-            System.out.println("1. Emprestar LIVRO FÍSICO");
-            System.out.println("2. Emprestar LIVRO DIGITAL");
-            System.out.println("3. Devolver livro");
-            System.out.println("4. Estender prazo");
-            System.out.println("5. Listar empréstimos em ABERTO");
-            System.out.println("6. Listar empréstimos DEVOLVIDOS");
-            System.out.println("7. Listar TODOS (mais recentes primeiro)");
-            System.out.println("0. Voltar");
-            System.out.print("Escolha: ");
+            showMenuOptions();
 
-            String opt = scanner.nextLine().trim();
-            switch (opt) {
-                case "1":
-                    emprestarFisico(loanController);
+            var option = MenuView.readOption();
+            switch (option  ) {
+                case 1:
+                    emprestar(loanController, false);
                     break;
-                case "2":
-                    emprestarDigital(loanController);
+                case 2:
+                    emprestar(loanController, true);
                     break;
-                case "3":
+                case 3:
                     devolver(loanController);
                     break;
-                case "4":
+                case 4:
                     estenderPrazo(loanController);
                     break;
-                case "5":
-                    listarAbertos(loanController);
+                case 5:
+                    listarEmprestimos(loanController, LoanFilter.OPEN);
                     break;
-                case "6":
-                    listarDevolvidos(loanController);
+                case 6:
+                    listarEmprestimos(loanController, LoanFilter.CLOSED);
                     break;
-                case "7":
-                    listarTodos(loanController);
+                case 7:
+                    listarEmprestimos(loanController, LoanFilter.ALL);
                     break;
-                case "0":
+                case 0:
                     return;
                 default: System.out.println("Opção inválida.");
             }
         }
     }
 
-    private static void emprestarFisico(LoanController lc) {
+    private static void emprestar(LoanController lc, boolean isDigital) {
         System.out.print("ID do usuário: ");
         String userId = scanner.nextLine().trim();
         System.out.print("ISBN do livro: ");
         String isbn = scanner.nextLine().trim();
+        isbn = IsbnValidator.getCleanIsbn(isbn);
 
-        boolean ok = lc.loanPhysical(userId, isbn);
-        if (!ok) System.out.println("Não foi possível realizar o empréstimo físico.");
-    }
-
-    private static void emprestarDigital(LoanController lc) {
-        System.out.print("ID do usuário: ");
-        String userId = scanner.nextLine().trim();
-        System.out.print("ISBN do livro: ");
-        String isbn = scanner.nextLine().trim();
-
-        boolean ok = lc.loanDigital(userId, isbn);
-        if (!ok) System.out.println("Não foi possível realizar o empréstimo digital.");
+        try {
+            var loan = lc.loan(userId, isbn, isDigital);
+            System.out.println("Empréstimo efetivado!\n" + loan);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Erro ao realizar empréstimo: " + e.getMessage());
+        }
     }
 
     private static void devolver(LoanController lc) {
@@ -78,9 +64,14 @@ public class LoanView {
         String userId = scanner.nextLine().trim();
         System.out.print("ISBN do livro: ");
         String isbn = scanner.nextLine().trim();
+        isbn = IsbnValidator.getCleanIsbn(isbn);
 
-        boolean ok = lc.returnBook(userId, isbn);
-        if (!ok) System.out.println("Não foi possível devolver (nenhum empréstimo em aberto encontrado?).");
+        try {
+            var returnedLoanOpt = lc.returnLoanedBook(userId, isbn);
+            System.out.println("Livro devolvido com sucesso!\n" + returnedLoanOpt.get());
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Erro ao devolver livro: " + e.getMessage());
+        }
     }
 
     private static void estenderPrazo(LoanController lc) {
@@ -88,42 +79,39 @@ public class LoanView {
         String userId = scanner.nextLine().trim();
         System.out.print("ISBN do livro: ");
         String isbn = scanner.nextLine().trim();
+        isbn = IsbnValidator.getCleanIsbn(isbn);
         System.out.print("Nova data (AAAA-MM-DD): ");
         String dateStr = scanner.nextLine().trim();
 
         try {
             LocalDate newDate = LocalDate.parse(dateStr);
-            boolean ok = lc.extendDueDate(userId, isbn, newDate);
-            if (!ok) System.out.println("Falha ao estender prazo.");
-        } catch (Exception e) {
-            System.out.println("Data inválida. Use o formato AAAA-MM-DD.");
+            var extendedLoan = lc.extendDueDate(userId, isbn, newDate);
+            System.out.println("Prazo estendido com sucesso!\n" + extendedLoan.get());
+        } catch (DateTimeException dte) {
+            System.out.println("Data inválida: " + dte.getMessage());
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Erro ao estender prazo: " + e.getMessage());
         }
     }
 
-    private static void listarAbertos(LoanController lc) {
-        List<Loan> list = lc.listOpenLoans();
-        if (list.isEmpty()) {
-            System.out.println("Nenhum empréstimo em aberto.");
+    private static void listarEmprestimos (LoanController lc, LoanFilter filter) {
+        var laons = lc.getLoansWithFilter(filter);
+        if (laons.isEmpty()) {
+            System.out.println("Nenhum empréstimo encontrado para o filtro selecionado.");
             return;
         }
-        for (Loan l : list) System.out.println(l);
+        for (Loan l : laons) System.out.println(l);
     }
 
-    private static void listarDevolvidos(LoanController lc) {
-        List<Loan> list = lc.listClosedLoans();
-        if (list.isEmpty()) {
-            System.out.println("Nenhum empréstimo devolvido.");
-            return;
-        }
-        for (Loan l : list) System.out.println(l);
-    }
-
-    private static void listarTodos(LoanController lc) {
-        List<Loan> list = lc.listLoansSortedByLoanDateDesc();
-        if (list.isEmpty()) {
-            System.out.println("Nenhum empréstimo registrado.");
-            return;
-        }
-        for (Loan l : list) System.out.println(l);
+    private static void showMenuOptions() {
+        System.out.println("\n=== EMPRÉSTIMOS ===");
+        System.out.println("1. Emprestar LIVRO FÍSICO");
+        System.out.println("2. Emprestar LIVRO DIGITAL");
+        System.out.println("3. Devolver livro");
+        System.out.println("4. Estender prazo");
+        System.out.println("5. Listar empréstimos em ABERTO");
+        System.out.println("6. Listar empréstimos DEVOLVIDOS");
+        System.out.println("7. Listar TODOS (mais recentes primeiro)");
+        System.out.println("0. Voltar");
     }
 }
