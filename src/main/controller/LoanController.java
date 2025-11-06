@@ -37,9 +37,9 @@ public class LoanController {
     }
 
     public Loan loan(String userId, String isbn, boolean isDigital) {
-        var ub = findUserAndBookOrThrow(userId, isbn); 
+        var ub = findUserAndBookOrThrow(userId, isbn);
 
-        if (isDigital) {
+        if (!isDigital) {
             if (ub.book().getNumberOfCopies() <= 0) {
                 throw new IllegalStateException("Sem cópias disponíveis.");
             }

@@ -2,6 +2,7 @@ package main.controller;
 
 import main.model.Author;
 import main.model.Book;
+import main.util.IsbnValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ public class BookController {
      */
     public Optional<Book> findByIsbn(String isbn) {
         return this.books.stream()
-                        .filter(book -> book.getIsbn().equals(isbn))
+                        .filter(book -> book.getIsbn().equals(IsbnValidator.getCleanIsbn(isbn)))
                         .findFirst();
     }
 
@@ -62,7 +63,7 @@ public class BookController {
      * @return true se o livro existir, false caso contrário
      */
     public boolean hasBook(String isbn){
-        return this.books.stream().anyMatch(book -> book.getIsbn().equals(isbn));
+        return this.books.stream().anyMatch(book -> book.getIsbn().equals(IsbnValidator.getCleanIsbn(isbn)));
     }
 
     /**
@@ -71,6 +72,6 @@ public class BookController {
      * @return true se o livro foi removido, false se não foi encontrado
      */
     public boolean removeByIsbn(String isbn) {
-        return books.removeIf(book -> book.getIsbn().equals(isbn));
+        return books.removeIf(book -> book.getIsbn().equals(IsbnValidator.getCleanIsbn(isbn)));
     }
 }

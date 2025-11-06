@@ -101,6 +101,7 @@ public class BookView implements MenuView {
                     book.getNumberOfCopies(),
                     book.getDigitalAvailability()
                 );
+                System.out.println();
             }
         }
     }
