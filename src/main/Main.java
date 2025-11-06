@@ -3,6 +3,7 @@ package main;
 import main.controller.BookController;
 import main.controller.LoanController;
 import main.controller.UserController;
+import main.util.DatabaseSeeder;
 
 import main.view.BookView;
 import main.view.LoanView;
@@ -18,6 +19,12 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+
+        if (shouldLoadSeedData(args)) {
+            DatabaseSeeder seeder = new DatabaseSeeder(bookService, userService, loanService);
+            seeder.seed();
+        }
+        
         System.out.println("===========================================");
         System.out.println("   SISTEMA DE BIBLIOTECA - BOAS PRÁTICAS   ");
         System.out.println("===========================================");
@@ -53,6 +60,20 @@ public class Main {
         }
 
         scanner.close();
+    }
+
+    private static boolean shouldLoadSeedData(String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+        
+        for (String arg : args) {
+            if (arg.equals("--seed") || arg.equals("-s")) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     private static void showMenu() {
