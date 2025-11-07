@@ -105,8 +105,8 @@ public class LoanView implements MenuView {
 
     private static void showMenuOptions() {
         System.out.println("\n=== EMPRÉSTIMOS ===");
-        System.out.println("1. Emprestar LIVRO FÍSICO");
-        System.out.println("2. Emprestar LIVRO DIGITAL");
+        System.out.println("1. Emprestar LIVRO DIGITAL");
+        System.out.println("2. Emprestar LIVRO FíSICO");
         System.out.println("3. Devolver livro");
         System.out.println("4. Estender prazo");
         System.out.println("5. Listar empréstimos em ABERTO");
