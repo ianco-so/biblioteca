@@ -70,9 +70,7 @@ public class LoanController {
         }
         
         var loanedBook = openLoan.get().getBook();
-        if (!loanedBook.getDigitalAvailability()) {
-            loanedBook.incrementCopies();
-        }
+        loanedBook.incrementCopies();
 
         return openLoan;
     }
