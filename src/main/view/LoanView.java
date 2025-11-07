@@ -51,8 +51,14 @@ public class LoanView implements MenuView {
         String isbn = scanner.nextLine().trim();
         isbn = IsbnValidator.getCleanIsbn(isbn);
 
+        
         try {
             var loan = lc.loan(userId, isbn, isDigital);
+            if(loan == null){
+                System.out.println("Empréstimo digital liberado com sucesso!");
+                System.out.println("Empréstimo digital fica disponível por 2 semanas!");
+                return;
+            }
             System.out.println("Empréstimo efetivado!\n" + loan);
         } catch (IllegalArgumentException | IllegalStateException e) {
             System.out.println("Erro ao realizar empréstimo: " + e.getMessage());
@@ -105,8 +111,8 @@ public class LoanView implements MenuView {
 
     private static void showMenuOptions() {
         System.out.println("\n=== EMPRÉSTIMOS ===");
-        System.out.println("1. Emprestar LIVRO DIGITAL");
-        System.out.println("2. Emprestar LIVRO FíSICO");
+        System.out.println("1. Emprestar LIVRO FíSICO");
+        System.out.println("2. Emprestar LIVRO DIGITAL");
         System.out.println("3. Devolver livro");
         System.out.println("4. Estender prazo");
         System.out.println("5. Listar empréstimos em ABERTO");

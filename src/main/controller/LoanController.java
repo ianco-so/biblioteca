@@ -39,20 +39,21 @@ public class LoanController {
     public Loan loan(String userId, String isbn, boolean isDigital) {
         var ub = findUserAndBookOrThrow(userId, isbn);
 
-        if (!isDigital) {
+        if(isDigital){
+            if (!ub.book().getDigitalAvailability()) {
+                throw new IllegalStateException("Este livro não possui versão digital disponível.");
+            }            
+            return null;
+        } else {
             if (ub.book().getNumberOfCopies() <= 0) {
                 throw new IllegalStateException("Sem cópias disponíveis.");
             }
-        } else {
-            if (!ub.book().getDigitalAvailability()) {
-                throw new IllegalStateException("Este livro não possui versão digital disponível.");
-            }
-            ub.book().decrementCopies();
         }
             
         var loan = new Loan(ub.book(), ub.user());
         ub.user().addLoanToHistory(loan);
         loans.add(loan);
+        ub.book().decrementCopies();
         return loan;
     }
 
