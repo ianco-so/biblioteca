@@ -54,11 +54,6 @@ public class LoanView implements MenuView {
         
         try {
             var loan = lc.loan(userId, isbn, isDigital);
-            if(loan == null){
-                System.out.println("Empréstimo digital liberado com sucesso!");
-                System.out.println("Empréstimo digital fica disponível por 2 semanas!");
-                return;
-            }
             System.out.println("Empréstimo efetivado!\n" + loan);
         } catch (IllegalArgumentException | IllegalStateException e) {
             System.out.println("Erro ao realizar empréstimo: " + e.getMessage());

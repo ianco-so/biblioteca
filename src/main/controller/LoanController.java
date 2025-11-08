@@ -38,12 +38,15 @@ public class LoanController {
 
     public Loan loan(String userId, String isbn, boolean isDigital) {
         var ub = findUserAndBookOrThrow(userId, isbn);
+        if (this.loans.stream()
+            .anyMatch(loan -> !loan.isReturned() && loan.getUser().equals(ub.user()) && loan.getBook().equals(ub.book()))) {
+            throw new IllegalStateException("Usuário já possui um empréstimo aberto para este livro.");
+        }
 
         if(isDigital){
             if (!ub.book().getDigitalAvailability()) {
                 throw new IllegalStateException("Este livro não possui versão digital disponível.");
-            }            
-            return null;
+            }
         } else {
             if (ub.book().getNumberOfCopies() <= 0) {
                 throw new IllegalStateException("Sem cópias disponíveis.");

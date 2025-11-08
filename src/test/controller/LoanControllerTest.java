@@ -18,6 +18,8 @@ public class LoanControllerTest {
         System.out.println("=== Testes do LoanController ===");
         
         System.out.println("\n\t\tloan()");
+        test.testLoanTwoTimesWithSameUserAndBookPhysical();
+        test.testLoanTwoTimesWithSameUserAndBookDigital();
         test.testLoanPhysicalBook();
         test.testLoanDigitalBook();
         test.testLoanWithoutCopies();
@@ -78,6 +80,36 @@ public class LoanControllerTest {
     }
 
     // ========== Testes de loan ==========
+
+    public void testLoanTwoTimesWithSameUserAndBookPhysical() {
+        System.out.print("testLoanTwoTimesWithSameUserAndBookPhysical: ");
+        
+        LoanController controller = setupController();
+        controller.loan("user123", "978-0132350884", false);
+        
+        try {
+            controller.loan("user123", "978-0132350884", false);
+            assert false : "Deveria lançar IllegalStateException";
+        } catch (IllegalStateException e) {
+            assert e.getMessage().contains("Usuário já possui um empréstimo aberto") : "Mensagem de erro incorreta";
+            printSuccess();
+        }
+    }
+
+    public void testLoanTwoTimesWithSameUserAndBookDigital() {
+        System.out.print("testLoanTwoTimesWithSameUserAndBookDigital: ");
+        
+        LoanController controller = setupController();
+        controller.loan("user123", "978-0132350884", true);
+        
+        try {
+            controller.loan("user123", "978-0132350884", true);
+            assert false : "Deveria lançar IllegalStateException";
+        } catch (IllegalStateException e) {
+            assert e.getMessage().contains("Usuário já possui um empréstimo aberto") : "Mensagem de erro incorreta";
+            printSuccess();
+        }
+    }
 
     public void testLoanPhysicalBook() {
         System.out.print("testLoanPhysicalBook: ");
