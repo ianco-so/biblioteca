@@ -42,14 +42,10 @@ public class UserView implements MenuView {
         System.out.print("Digite o ID do usuário: ");
         String id = scanner.nextLine();
 
-        if(userService.findById(id).isPresent()){
-            System.out.println("\n -- Esse usuário já está cadastrado! -- ");
-        } else {
-            try{
-                userService.registerUser(name, id);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Erro ao cadastrar usuário: " + e.getMessage());
-            }
+        try{
+            userService.registerUser(name, id);
+        } catch (IllegalArgumentException | IllegalStateException e){
+            System.out.println("Erro ao cadastrar usuário: " + e.getMessage());
         }
         
     }

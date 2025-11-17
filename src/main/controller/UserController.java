@@ -15,14 +15,15 @@ public class UserController {
      * @param name
      * @param id
      * @return Usuário registrado ou existente
-     * @throws IllegalArgumentException
+     * @throws IllegalStateException caso o usuário já esteja cadastrado
      */
     public User registerUser(String name, String id){
-        User user = new User(name, id);
-        if(!this.findById(id).isPresent()){
-            this.users.add(user);
+        if(this.findById(id).isPresent()){
+            throw new IllegalStateException("Esse usuário já está cadastrado");
         }
-       
+        
+        User user = new User(name, id);
+        this.users.add(user);
         return user;
     }
 

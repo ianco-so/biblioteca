@@ -55,14 +55,16 @@ public class UserControllerTest {
     public void testRegisterUserWithDuplicateId() {
         System.out.print("testRegisterUserWithDuplicateId: ");
         
-        UserController controller = new UserController();
+        var controller = new UserController();
         controller.registerUser("João Silva", "user123");
         
         // Registrar novamente não deve adicionar outro usuário
-        User user2 = controller.registerUser("Maria Santos", "user123");
-        
+        try {
+            controller.registerUser("Maria Santos", "user123");
+        } catch (IllegalStateException e) {
+            assert e.getMessage().contains("já está cadastrado") : "Mensagem de erro incorreta";
+        }
         assert controller.getAllUsers().size() == 1 : "Não deveria ter adicionado usuário duplicado";
-        assert user2.getName().equals("Maria Santos") : "Deveria criar novo objeto User";
         
         printSuccess();
     }
