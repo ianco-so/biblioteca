@@ -11,18 +11,20 @@ public class Loan {
     private LocalDate loanDate;
     private LocalDate dueDate;
     private LocalDate returnDate; // null se não devolvido ainda
+    private boolean isDigital;
 
-    public Loan(Book book, User user, LocalDate loanDate, LocalDate dueDate) {
+    public Loan(Book book, User user, LocalDate loanDate, LocalDate dueDate, boolean isDigital) {
         validate(book, user, loanDate, dueDate);
         this.book = book;
         this.user = user;
         this.loanDate = loanDate;
         this.dueDate = dueDate;
         this.returnDate = null;
-    }
+        this.isDigital = isDigital;
+    }   
 
-    public Loan(Book book, User user) {
-        this(book, user, LocalDate.now(), LocalDate.now().plusDays(DEFAULT_LOAN_PERIOD_DAYS));
+    public Loan(Book book, User user, boolean isDigital) {
+        this(book, user, LocalDate.now(), LocalDate.now().plusDays(DEFAULT_LOAN_PERIOD_DAYS), isDigital);
     }
 
     private static void validate (Book book, User user, LocalDate loanDate, LocalDate dueDate) {
@@ -75,6 +77,9 @@ public class Loan {
     }
     public LocalDate getReturnDate() { 
         return returnDate; 
+    }
+    public boolean isDigital() {
+        return isDigital;
     }
 
     @Override

@@ -51,12 +51,12 @@ public class LoanController {
             if (ub.book().getNumberOfCopies() <= 0) {
                 throw new IllegalStateException("Sem cópias disponíveis.");
             }
+            ub.book().decrementCopies();
         }
             
-        var loan = new Loan(ub.book(), ub.user());
+        var loan = new Loan(ub.book(), ub.user(), isDigital);
         ub.user().addLoanToHistory(loan);
         loans.add(loan);
-        ub.book().decrementCopies();
         return loan;
     }
 
@@ -74,7 +74,9 @@ public class LoanController {
         }
         
         var loanedBook = openLoan.get().getBook();
-        loanedBook.incrementCopies();
+        if (!openLoan.get().isDigital()) {
+            loanedBook.incrementCopies();
+        }
 
         return openLoan;
     }
