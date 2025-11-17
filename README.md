@@ -49,42 +49,54 @@ Sistema de gerenciamento de biblioteca que permite:
 biblioteca/
 ├── src/
 │   ├── main/
-│   │   ├── Main.java
-│   │   ├── model/
-│   │   │   ├── Author.java
-│   │   │   ├── Book.java
-│   │   │   ├── User.java
-│   │   │   ├── Loan.java
-│   │   │   └── enums/
-│   │   │       └── LoanFilter.java
-│   │   ├── controller/
-│   │   │   ├── BookController.java
-│   │   │   ├── UserController.java
-│   │   │   └── LoanController.java
-│   │   ├── view/
-│   │   │   ├── MenuView.java
-│   │   │   ├── BookView.java
-│   │   │   ├── UserView.java
-│   │   │   └── LoanView.java
-│   │   └── util/
-│   │       ├── DatabaseSeeder.java
-│   │       └── IsbnValidator.java
+│   │   ├── java/
+│   │   │   ├── main/
+│   │   │   │   └── Main.java
+│   │   │   ├── model/
+│   │   │   │   ├── Author.java
+│   │   │   │   ├── Book.java
+│   │   │   │   ├── User.java
+│   │   │   │   ├── Loan.java
+│   │   │   │   └── enums/
+│   │   │   │       └── LoanFilter.java
+│   │   │   ├── controller/
+│   │   │   │   ├── BookController.java
+│   │   │   │   ├── UserController.java
+│   │   │   │   └── LoanController.java
+│   │   │   ├── view/
+│   │   │   │   ├── MenuView.java
+│   │   │   │   ├── BookView.java
+│   │   │   │   ├── UserView.java
+│   │   │   │   └── LoanView.java
+│   │   │   └── util/
+│   │   │       ├── DatabaseSeeder.java
+│   │   │       └── IsbnValidator.java
+│   │   └── resources/
+│   │       └── checkstyle/
+│   │           └── google_checks.xml
 │   └── test/
-│       ├── util/
-│       │   └── IsbnValidatorTest.java
-│       ├── controller/
-│       │   ├── BookControllerTest.java
-│       │   ├── UserControllerTest.java
-│       │   └── LoanControllerTest.java
-│       ├── view/
-│       │   ├── BookViewTest.java
-│       │   ├── UserViewTest.java
-│       │   └── LoanViewTest.java
-│       └── TestRunner.java
-├── bin/                    (gerado após compilação)
-├── run.bat                 (script Windows)
-├── run.sh                  (script Linux/Mac)
-└── README.md      (você está aqui)
+│       └── java/
+│           ├── test/
+│           │   ├── util/
+│           │   │   └── IsbnValidatorTest.java
+│           │   ├── controller/
+│           │   │   ├── BookControllerTest.java
+│           │   │   ├── UserControllerTest.java
+│           │   │   └── LoanControllerTest.java
+│           │   ├── view/
+│           │   │   ├── BookViewTest.java
+│           │   │   ├── UserViewTest.java
+│           │   │   └── LoanViewTest.java
+│           │   └── TestRunner.java
+├── target/                 (gerado após compilação Maven)
+├── .mvn/                   (Maven Wrapper)
+├── mvnw                    (Maven Wrapper - Linux/Mac)
+├── mvnw.cmd                (Maven Wrapper - Windows)
+├── pom.xml                 (configuração Maven)
+├── scripts/
+│   ├── run.bat             (script Windows - legado)
+│   └── run.sh              (script Linux/Mac - legado)
+└── README.md               (você está aqui)
 ```
 
 ## 🧪 Testes
@@ -119,70 +131,135 @@ O projeto possui uma suíte com **47 testes** (testes que só):
 
 ### Pré-requisitos
 
-- Java 8 ou superior
+- **Java 21 LTS** (instalado e configurado no PATH)
+- **Maven** Opcional (não é necessário! O projeto usa Maven Wrapper (`mvnw`))
 
-### Opção 1: Scripts de Execução (se você é nutela e não quer complicação)
+### Opção 1: Maven (Recomendado) ⭐
 
-- :rocket: No Windows: execute o arquivo `run.bat`
+O projeto usa **Maven Wrapper**, então você **não precisa instalar Maven**!
+
+<!-- #### Compilar o projeto (não cria o jar)
 ```powershell
-.\run.bat
+# Windows
+.\mvnw.cmd clean compile
+
+# Linux/Mac
+./mvnw clean compile
+
+# Com maven instalado globalmente (esperto)
+mvn clean compile
+``` -->
+
+#### Executar o programa
+```powershell
+# Windows
+.\mvnw.cmd clean package
+java -jar target\biblioteca-1.0.0.jar
+
+# Linux/Mac
+./mvnw clean package
+java -jar target/biblioteca-1.0.0.jar
+
+# Com maven instalado globalmente (esperto)
+mvn clean package
+java -jar target/biblioteca-1.0.0.jar
+```
+
+#### Executar com dados de exemplo (seed)
+```powershell
+# Compilar e gerar JAR
+.\mvnw.cmd clean package
+
+# Executar com seed
+java -jar target\biblioteca-1.0.0.jar --seed
+```
+
+#### Executar os testes
+```powershell
+# Windows
+.\mvnw.cmd test
+
+# Linux/Mac
+./mvnw test
+
+# Maven
+mvn test
+```
+
+#### Verificar estilo de código (Checkstyle)
+```powershell
+# Windows
+.\mvnw.cmd checkstyle:check
+
+# Linux/Mac
+./mvnw checkstyle:check
+
+# Maven
+mvn checkstyle:check
+```
+
+#### Gerar relatório HTML:
+```powershell
+# Windows
+.\mvnw.cmd site
+
+# Linux/Mac
+./mvnw site
+
+# Maven
+mvn site
+```
+O relatório será gerado em `target/site/checkstyle.html`
+
+### Opção 2: Scripts Legados (Compatibilidade)
+
+Os scripts antigos ainda funcionam para execução direta:
+
+- No Windows: execute o arquivo `run.bat`
+```powershell
+.\scripts\run.bat
 ```
 - No Linux/Mac: execute o arquivo `run.sh`
 ```bash
-./run.sh
+./scripts/run.sh
 ```
-- :card_file_box: Para executar com dados de exemplo (seed), adicione a flag `--seed` ou `-s`:
+- Para executar com dados de exemplo (seed), adicione a flag `--seed` ou `-s`:
 ```powershell
-.\run.bat --seed
+.\scripts\run.bat --seed
 ```
 ```bash
-./run.sh --seed
+./scripts/run.sh --seed
 ```
-- :test_tube: Para executar os testes, use o comando `test`:
+- Para executar os testes, use o comando `test`:
 ```powershell
-.\run.bat test
+.\scripts\run.bat test
 ```
 ```bash
-./run.sh test
-```
-### Opção 2: Já que você é hardcore e gosta de dor de cabeça, faça manualmente
-
-- Compilação (Windows/Linux/Mac):
-```bash
-javac -encoding UTF-8 -d bin src/main/Main.java src/main/model/*.java src/main/model/enums/*.java src/main/controller/*.java src/main/view/*.java src/main/util/*.java
+./scripts/run.sh test
 ```
 
-- Execução
-- :rocket: Sem seed:
-```bash
-java -cp bin main.Main
-```
-- :card_file_box: Com seed:
-```bash
-java -cp bin main.Main --seed
-```
-- Compilação dos testes:
-```bash
-javac -encoding UTF-8 -d bin src/main/model/*.java src/main/model/enums/*.java src/main/util/*.java src/main/controller/*.java src/test/util/*.java src/test/controller/*.java src/test/view/*.java src/test/TestRunner.java
-```
-- :test_tube: Execução dos testes:
-```bash
-java -ea -cp bin test.TestRunner
-```
+#### Configuração:
+- Arquivo de regras: `src/main/resources/checkstyle/google_checks.xml`
+- Plugin Maven: `maven-checkstyle-plugin` versão 3.3.1
+- Checkstyle: versão 12.1.2
 
 ## 🎯 Boas Práticas Aplicadas
 
 - **Arquitetura MVC** - Separação clara em Model, View, Controller
+- **Gerenciamento de Dependências** - Maven para build, testes e plugins
+- **Maven Wrapper** - Sem necessidade de instalação prévia do Maven
+- **Java 21 LTS** - Versão Long-Term Support mais recente
 - **Encapsulamento** - Atributos privados com getters/setters apropriados
 - **Validação de Dados** - Validação robusta em todas as camadas
   - ISBN-10 e ISBN-13 com algoritmo de checksum
   - Validação de IDs de usuário (alfanumérico)
   - Validação de prazos e datas
 - **Tratamento de Exceções** - Exceções específicas e mensagens claras
-- **Testes Automatizados** - 47 testes unitários e de integração
+- **Testes Automatizados** - 49 testes unitários e de integração
 - **Imutabilidade** - Uso de `Optional`, `List.copyOf()`, records
 - **Código Limpo** - Nomenclatura clara, métodos pequenos e focados
 - **Documentação** - JavaDoc em métodos públicos
 - **Streams e Programação Funcional** - Uso de Streams API quando apropriado
 - **Enums** - Para valores fixos (LoanFilter)
 - **Utilities** - Classes utilitárias estáticas (IsbnValidator, DatabaseSeeder)
+- **Análise Estática** - Checkstyle com Google Style Guide
