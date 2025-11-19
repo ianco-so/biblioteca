@@ -25,6 +25,8 @@
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
         <maven.checkstyle.plugin.version>3.3.1</maven.checkstyle.plugin.version>
         <checkstyle.version>12.1.2</checkstyle.version>
+        <maven.pmd.plugin.version>3.25.0</maven.pmd.plugin.version>
+        <pmd.version>7.8.0</pmd.version>
         <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
     </properties>
 
@@ -101,6 +103,41 @@
                
             </plugin>
 
+            <!-- Plugin PMD -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven.pmd.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sourceforge.pmd</groupId>
+                        <artifactId>pmd-java</artifactId>
+                        <version>${pmd.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>net.sourceforge.pmd</groupId>
+                        <artifactId>pmd-core</artifactId>
+                        <version>${pmd.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <targetJdk>21</targetJdk>
+                    <rulesets>
+                        <ruleset>category/java/bestpractices.xml</ruleset>
+                        <ruleset>category/java/codestyle.xml</ruleset>
+                        <ruleset>category/java/design.xml</ruleset>
+                        <ruleset>category/java/errorprone.xml</ruleset>
+                        <ruleset>category/java/multithreading.xml</ruleset>
+                        <ruleset>category/java/performance.xml</ruleset>
+                    </rulesets>
+                    <printFailingErrors>true</printFailingErrors>
+                    <failOnViolation>false</failOnViolation>
+                    <verbose>true</verbose>
+                    <includeTests>true</includeTests>
+                </configuration>
+                <!-- PMD será executado manualmente com: mvn pmd:check -->
+            </plugin>
+
             <!-- Plugin para criar JAR executável -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -118,7 +155,7 @@
         </plugins>
     </build>
 
-    <!-- Reporting para gerar relatórios HTML do Checkstyle -->
+    <!-- Reporting para gerar relatórios HTML do Checkstyle e PMD -->
     <reporting>
         <plugins>
             <plugin>
@@ -127,6 +164,22 @@
                 <version>${maven.checkstyle.plugin.version}</version>
                 <configuration>
                     <configLocation>src/main/resources/checkstyle/google_checks.xml</configLocation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven.pmd.plugin.version}</version>
+                <configuration>
+                    <targetJdk>21</targetJdk>
+                    <rulesets>
+                        <ruleset>category/java/bestpractices.xml</ruleset>
+                        <ruleset>category/java/codestyle.xml</ruleset>
+                        <ruleset>category/java/design.xml</ruleset>
+                        <ruleset>category/java/errorprone.xml</ruleset>
+                        <ruleset>category/java/multithreading.xml</ruleset>
+                        <ruleset>category/java/performance.xml</ruleset>
+                    </rulesets>
                 </configuration>
             </plugin>
         </plugins>
