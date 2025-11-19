@@ -1,8 +1,8 @@
-package main.java.controller;
+package controller;
 
-import main.java.model.Author;
-import main.java.model.Book;
-import main.java.util.IsbnValidator;
+import model.Author;
+import model.Book;
+import util.IsbnValidator;
 
 import java.util.ArrayList;
 import java.util.List;

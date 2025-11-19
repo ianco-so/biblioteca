@@ -1,8 +1,8 @@
-package main.java.view;
+package view;
 
-import main.java.controller.BookController;
-import main.java.model.Book;
-import main.java.util.IsbnValidator;
+import controller.BookController;
+import model.Book;
+import util.IsbnValidator;
 
 import java.util.List;
 import java.util.Optional;

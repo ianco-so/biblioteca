@@ -1,7 +1,6 @@
-package test.java.controller;
+package controller;
 
-import main.java.controller.UserController;
-import main.java.model.User;
+import model.User;
 
 import java.util.List;
 import java.util.Optional;

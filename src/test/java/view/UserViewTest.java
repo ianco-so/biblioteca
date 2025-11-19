@@ -1,6 +1,6 @@
-package test.java.view;
+package view;
 
-import main.java.controller.UserController;
+import controller.UserController;
 
 public class UserViewTest {
 

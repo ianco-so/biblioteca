@@ -1,6 +1,6 @@
-package test.java.view;
+package view;
 
-import main.java.controller.BookController;
+import controller.BookController;
 
 public class BookViewTest {
 

@@ -1,6 +1,6 @@
-package main.java.model;
+package model;
 
-import main.java.util.IsbnValidator;
+import util.IsbnValidator;
 
 public class Book {
     private String title;

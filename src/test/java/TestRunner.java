@@ -1,12 +1,12 @@
-package test.java;
 
-import test.java.util.IsbnValidatorTest;
-import test.java.controller.BookControllerTest;
-import test.java.controller.UserControllerTest;
-import test.java.controller.LoanControllerTest;
-import test.java.view.BookViewTest;
-import test.java.view.UserViewTest;
-import test.java.view.LoanViewTest;
+
+import util.IsbnValidatorTest;
+import controller.BookControllerTest;
+import controller.UserControllerTest;
+import controller.LoanControllerTest;
+import view.BookViewTest;
+import view.UserViewTest;
+import view.LoanViewTest;
 
 public class TestRunner {
     public static void main(String[] args) {

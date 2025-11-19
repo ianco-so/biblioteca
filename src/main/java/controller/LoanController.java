@@ -1,9 +1,9 @@
-package main.java.controller;
+package controller;
 
-import main.java.model.Book;
-import main.java.model.Loan;
-import main.java.model.User;
-import main.java.model.enums.LoanFilter;
+import model.Book;
+import model.Loan;
+import model.User;
+import model.enums.LoanFilter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

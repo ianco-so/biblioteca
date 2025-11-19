@@ -1,9 +1,9 @@
-package main.java.view;
+package view;
 
-import main.java.controller.LoanController;
-import main.java.model.Loan;
-import main.java.model.enums.LoanFilter;
-import main.java.util.IsbnValidator;
+import controller.LoanController;
+import model.Loan;
+import model.enums.LoanFilter;
+import util.IsbnValidator;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;

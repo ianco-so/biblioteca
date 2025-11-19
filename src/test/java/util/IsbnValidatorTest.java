@@ -1,6 +1,4 @@
-package test.java.util;
-
-import main.java.util.IsbnValidator;
+package util;
 
 public class IsbnValidatorTest {
 

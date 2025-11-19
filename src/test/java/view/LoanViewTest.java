@@ -1,8 +1,8 @@
-package test.java.view;
+package view;
 
-import main.java.controller.BookController;
-import main.java.controller.LoanController;
-import main.java.controller.UserController;
+import controller.BookController;
+import controller.LoanController;
+import controller.UserController;
 
 public class LoanViewTest {
 

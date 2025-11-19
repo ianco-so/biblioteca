@@ -1,14 +1,12 @@
-package main.java;
+import controller.BookController;
+import controller.LoanController;
+import controller.UserController;
+import util.DatabaseSeeder;
 
-import main.java.controller.BookController;
-import main.java.controller.LoanController;
-import main.java.controller.UserController;
-import main.java.util.DatabaseSeeder;
-
-import main.java.view.BookView;
-import main.java.view.LoanView;
-import main.java.view.MenuView;
-import main.java.view.UserView;
+import view.BookView;
+import view.LoanView;
+import view.MenuView;
+import view.UserView;
 
 import java.util.Scanner;
 

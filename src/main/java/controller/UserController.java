@@ -1,7 +1,7 @@
-package main.java.controller;
+package controller;
 
-import main.java.model.Loan;
-import main.java.model.User;
+import model.Loan;
+import model.User;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,10 +1,7 @@
-package test.java.controller;
+package controller;
 
-import main.java.controller.BookController;
-import main.java.controller.LoanController;
-import main.java.controller.UserController;
-import main.java.model.Loan;
-import main.java.model.enums.LoanFilter;
+import model.Loan;
+import model.enums.LoanFilter;
 
 import java.time.LocalDate;
 import java.util.List;
