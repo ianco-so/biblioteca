@@ -207,7 +207,72 @@ mvn jdepend:generate
 mvn clean compile site
 ```
 
-Para visualizar os relatórios:
+### 🔍 SonarQube - Análise Centralizada
+
+O SonarQube centraliza todas as análises em um dashboard interativo.
+
+#### Opção 1: Docker (Recomendado) ⭐
+
+**Requisito:** Docker instalado ([Download](https://www.docker.com/products/docker-desktop))
+
+```powershell
+# 1. Iniciar o servidor SonarQube
+docker-compose up -d
+
+# 2. Aguardar ~2 minutos até o servidor iniciar completamente
+# Verificar se está pronto:
+docker logs -f sonarqube-biblioteca
+
+# 3. Acessar http://localhost:9000
+# Login: admin / Senha: admin (vai pedir para trocar)
+
+# 4. Criar projeto manualmente:
+#    - Create Project → Manually
+#    - Project key: biblioteca
+#    - Display name: Sistema de Gerenciamento de Biblioteca
+#    - Main branch: main
+#    - Set Up → Locally
+#    - Generate Token → Copiar o token
+
+# 5. Executar análise (substitua SEU_TOKEN pelo token gerado)
+mvn clean verify sonar:sonar -Dsonar.token=SEU_TOKEN
+
+# 6. Parar o servidor
+docker-compose down
+```
+
+#### Opção 2: Instalação Manual
+
+**Requisito:** Java 17 instalado
+
+```powershell
+# 1. Baixar SonarQube Community Edition
+# https://www.sonarsource.com/products/sonarqube/downloads/
+
+# 2. Descompactar em C:\sonarqube (sem espaços no caminho)
+
+# 3. Iniciar servidor (Windows)
+C:\sonarqube\bin\windows-x86-64\StartSonar.bat
+
+# 4. Aguardar até ver: "SonarQube is operational"
+
+# 5. Acessar http://localhost:9000 e seguir passos 3-5 da Opção 1
+```
+
+#### Dashboard do SonarQube
+
+Após a análise, você terá acesso a:
+
+- 📊 **Dívida Técnica**: Tempo estimado para corrigir problemas
+- 🐛 **Bugs**: Problemas que podem causar erros
+- 🔒 **Vulnerabilidades**: Problemas de segurança
+- 💡 **Code Smells**: Problemas de manutenibilidade
+- 📈 **Cobertura de Testes**: Porcentagem de código testado
+- 🔄 **Duplicação**: Código duplicado/copiado
+- 📐 **Complexidade Ciclomática**: Medida de complexidade do código
+- 📦 **Métricas por Pacote**: Análise detalhada da arquitetura
+
+Para visualizar os relatórios offline:
 ```powershell
 # Windows - abrir no navegador
 start target\site\project-reports.html
@@ -227,13 +292,14 @@ open target/site/project-reports.html      # Mac
 
 ### Ferramentas de Análise de Código
 
-O projeto utiliza 5 ferramentas de análise de código:
+O projeto utiliza **6 ferramentas** de análise de código:
 
 1. **Checkstyle** - Verifica estilo de código seguindo Google Style Guide
 2. **PMD** - Detecta problemas de código, bugs potenciais e code smells
 3. **CPD** - Detecta código duplicado (Copy/Paste Detector)
 4. **SpotBugs** - Encontra bugs através de análise de bytecode (inclui FindSecBugs para vulnerabilidades de segurança)
 5. **JDepend** - Analisa qualidade do design e dependências entre pacotes
+6. **SonarQube** - Dashboard centralizado que integra todas as ferramentas anteriores
 
 **Categorias de regras PMD configuradas:**
 - Best Practices (melhores práticas)
@@ -249,6 +315,7 @@ O projeto utiliza 5 ferramentas de análise de código:
 - **PMD**: Versão 7.18.0 com 6 categorias de regras
 - **SpotBugs**: Versão 4.9.8 (inclui FindSecBugs 1.14.0)
 - **JDepend**: Versão 2.1
+- **SonarQube**: Plugin Maven 5.3.0 (requer servidor rodando)
 - **Java**: 25
 
 ## 🎯 Boas Práticas Aplicadas

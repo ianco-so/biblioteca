@@ -34,6 +34,18 @@
         <spotbugs.version>4.9.8</spotbugs.version>
         <findsecbugs.plugin.version>1.14.0</findsecbugs.plugin.version>
         <jdepend.plugin.version>2.1</jdepend.plugin.version>
+        <sonar.plugin.version>5.3.0.6276</sonar.plugin.version>
+        
+        <!-- Configurações SonarQube -->
+        <sonar.projectKey>biblioteca</sonar.projectKey>
+        <sonar.projectName>Sistema de Gerenciamento de Biblioteca</sonar.projectName>
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <sonar.java.source>${maven.compiler.source}</sonar.java.source>
+        
+        <!-- Integração com ferramentas de análise -->
+        <sonar.java.checkstyle.reportPaths>target/checkstyle-result.xml</sonar.java.checkstyle.reportPaths>
+        <sonar.java.pmd.reportPaths>target/pmd.xml</sonar.java.pmd.reportPaths>
+        <sonar.java.spotbugs.reportPaths>target/spotbugsXml.xml</sonar.java.spotbugs.reportPaths>
     </properties>
 
     <build>
@@ -204,6 +216,14 @@
                 <artifactId>jdepend-maven-plugin</artifactId>
                 <version>${jdepend.plugin.version}</version>
                 <!-- JDepend será executado manualmente com: mvn jdepend:generate -->
+            </plugin>
+
+            <!-- Plugin SonarQube -->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar.plugin.version}</version>
+                <!-- SonarQube será executado manualmente com: mvn sonar:sonar -Dsonar.token=SEU_TOKEN -->
             </plugin>
         </plugins>
     </build>
