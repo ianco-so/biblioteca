@@ -52,42 +52,23 @@ biblioteca/
 │   │   ├── java/
 │   │   │   ├── main/
 │   │   │   │   └── Main.java
-│   │   │   ├── model/
-│   │   │   │   ├── Author.java
-│   │   │   │   ├── Book.java
-│   │   │   │   ├── User.java
-│   │   │   │   ├── Loan.java
-│   │   │   │   └── enums/
-│   │   │   │       └── LoanFilter.java
-│   │   │   ├── controller/
-│   │   │   │   ├── BookController.java
-│   │   │   │   ├── UserController.java
-│   │   │   │   └── LoanController.java
-│   │   │   ├── view/
-│   │   │   │   ├── MenuView.java
-│   │   │   │   ├── BookView.java
-│   │   │   │   ├── UserView.java
-│   │   │   │   └── LoanView.java
+│   │   │   ├── model/          (modelos de dados)
+│   │   │   ├── controller/     (lógica de controle)
+│   │   │   ├── view/           (interface de usuário)
 │   │   │   └── util/
-│   │   │       ├── DatabaseSeeder.java
-│   │   │       └── IsbnValidator.java
+│   │   │       ├── DatabaseSeeder.java (seeding de dados de exemplo)
+│   │   │       └── IsbnValidator.java (validação de ISBN)
 │   │   └── resources/
-│   │       └── checkstyle/
-│   │           └── google_checks.xml
+│   │       ├── checkstyle/
+│   │       │   └── google_checks.xml (configuração do Checkstyle)
+│   │       
 │   └── test/
 │       └── java/
 │           ├── test/
-│           │   ├── util/
-│           │   │   └── IsbnValidatorTest.java
-│           │   ├── controller/
-│           │   │   ├── BookControllerTest.java
-│           │   │   ├── UserControllerTest.java
-│           │   │   └── LoanControllerTest.java
-│           │   ├── view/
-│           │   │   ├── BookViewTest.java
-│           │   │   ├── UserViewTest.java
-│           │   │   └── LoanViewTest.java
-│           │   └── TestRunner.java
+│           │   ├── util/         (testes dos utilitários)
+│           │   ├── controller/   (testes dos controllers)
+│           │   ├── view/         (testes das views)
+│           │   └── TestRunner.java (executa todos os testes)
 ├── target/                 (gerado após compilação Maven)
 ├── .mvn/                   (Maven Wrapper)
 ├── mvnw                    (Maven Wrapper - Linux/Mac)
@@ -132,25 +113,25 @@ O projeto possui uma suíte com **47 testes** (testes que só):
 ### Pré-requisitos
 
 - **Java 21 LTS** (instalado e configurado no PATH)
-- **Maven** Opcional (não é necessário! O projeto usa Maven Wrapper (`mvnw`))
+- **Maven** (opcional - o projeto usa Maven Wrapper)
 
 ### Opção 1: Maven (Recomendado) ⭐
 
 O projeto usa **Maven Wrapper**, então você **não precisa instalar Maven**!
 
-<!-- #### Compilar o projeto (não cria o jar)
+#### Executar o programa diretamente
 ```powershell
 # Windows
-.\mvnw.cmd clean compile
+.\mvnw.cmd compile exec:java
 
 # Linux/Mac
-./mvnw clean compile
+./mvnw compile exec:java
 
-# Com maven instalado globalmente (esperto)
-mvn clean compile
-``` -->
+# Com Maven instalado globalmente
+mvn compile exec:java
+```
 
-#### Executar o programa
+#### Ou gerar JAR e executar
 ```powershell
 # Windows
 .\mvnw.cmd clean package
@@ -160,17 +141,13 @@ java -jar target\biblioteca-1.0.0.jar
 ./mvnw clean package
 java -jar target/biblioteca-1.0.0.jar
 
-# Com maven instalado globalmente (esperto)
+# Com Maven instalado globalmente
 mvn clean package
 java -jar target/biblioteca-1.0.0.jar
 ```
 
 #### Executar com dados de exemplo (seed)
 ```powershell
-# Compilar e gerar JAR
-.\mvnw.cmd clean package
-
-# Executar com seed
 java -jar target\biblioteca-1.0.0.jar --seed
 ```
 
@@ -186,62 +163,70 @@ java -jar target\biblioteca-1.0.0.jar --seed
 mvn test
 ```
 
-#### Verificar estilo de código (Checkstyle)
-```powershell
-# Windows
-.\mvnw.cmd checkstyle:check
-
-# Linux/Mac
-./mvnw checkstyle:check
-
-# Maven
-mvn checkstyle:check
-```
-
-#### Gerar relatório HTML:
-```powershell
-# Windows
-.\mvnw.cmd site
-
-# Linux/Mac
-./mvnw site
-
-# Maven
-mvn site
-```
-O relatório será gerado em `target/site/checkstyle.html`
-
 ### Opção 2: Scripts Legados (Compatibilidade)
 
 Os scripts antigos ainda funcionam para execução direta:
 
-- No Windows: execute o arquivo `run.bat`
 ```powershell
+# Windows
 .\scripts\run.bat
-```
-- No Linux/Mac: execute o arquivo `run.sh`
-```bash
-./scripts/run.sh
-```
-- Para executar com dados de exemplo (seed), adicione a flag `--seed` ou `-s`:
-```powershell
+
+# Windows com seed
 .\scripts\run.bat --seed
-```
-```bash
+
+# Linux/Mac
+./scripts/run.sh
+
+# Linux/Mac com seed
 ./scripts/run.sh --seed
 ```
-- Para executar os testes, use o comando `test`:
+
+## 📊 Análise de Código e Relatórios
+
 ```powershell
-.\scripts\run.bat test
-```
-```bash
-./scripts/run.sh test
+# Verificar com checkstyle:
+mvn checkstyle:check
+
+# Executar análise PMD: detecta problemas de código, bugs potenciais e code smells:
+mvn pmd:check
+
+# Gerar todos os relatórios (Checkstyle + PMD + CPD)
+mvn clean site
 ```
 
-#### Configuração:
-- Arquivo de regras: `src/main/resources/checkstyle/google_checks.xml`
-- Plugin Maven: `maven-checkstyle-plugin` versão 3.3.1
-- Checkstyle: versão 12.1.2
+Para visualizar os relatórios:
+```powershell
+# Windows - abrir no navegador
+start target\site\project-reports.html
+
+# Linux/Mac
+xdg-open target/site/project-reports.html  # Linux
+open target/site/project-reports.html      # Mac
+```
+
+📄 Relatórios gerados em: `target/site/`
+- `checkstyle.html` - Análise de estilo de código
+- `pmd.html` - Análise estática PMD
+- `cpd.html` - Detecção de código duplicado
+- `project-reports.html` - Página índice com todos os relatórios
+
+### PMD (Análise Estática)
+
+
+
+**Categorias de regras PMD configuradas:**
+- Best Practices (melhores práticas)
+- Code Style (estilo de código)
+- Design (design de código)
+- Error Prone (propenso a erros)
+- Multithreading (problemas de concorrência)
+- Performance (otimizações)
+
+### Configurações
+
+- **Checkstyle**: `src/main/resources/checkstyle/google_checks.xml` (versão 12.1.2)
+- **PMD**: Versão 7.8.0 com 6 categorias de regras
+- **Java**: 21 LTS
 
 ## 🎯 Boas Práticas Aplicadas
 
