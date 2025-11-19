@@ -30,6 +30,9 @@
         <maven.jar.plugin.version>3.5.0</maven.jar.plugin.version>
         <maven.project.info.reports.plugin.version>3.9.0</maven.project.info.reports.plugin.version>
         <maven.exec.plugin.version>3.6.2</maven.exec.plugin.version>
+        <spotbugs.plugin.version>4.9.8.1</spotbugs.plugin.version>
+        <spotbugs.version>4.9.8</spotbugs.version>
+        <findsecbugs.plugin.version>1.14.0</findsecbugs.plugin.version>
     </properties>
 
     <build>
@@ -164,6 +167,35 @@
                     <mainClass>Main</mainClass>
                 </configuration>
             </plugin>
+
+            <!-- Plugin SpotBugs -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs</artifactId>
+                        <version>${spotbugs.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <failOnError>false</failOnError>
+                    <includeTests>true</includeTests>
+                    <xmlOutput>true</xmlOutput>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.h3xstream.findsecbugs</groupId>
+                            <artifactId>findsecbugs-plugin</artifactId>
+                            <version>${findsecbugs.plugin.version}</version>
+                        </plugin>
+                    </plugins>
+                </configuration>
+                <!-- SpotBugs será executado manualmente com: mvn spotbugs:check -->
+            </plugin>
         </plugins>
     </build>
 
@@ -206,6 +238,15 @@
                         <ruleset>category/java/multithreading.xml</ruleset>
                         <ruleset>category/java/performance.xml</ruleset>
                     </rulesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs.plugin.version}</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
                 </configuration>
             </plugin>
         </plugins>

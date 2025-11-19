@@ -191,8 +191,21 @@ mvn checkstyle:check
 # Executar análise PMD: detecta problemas de código, bugs potenciais e code smells:
 mvn pmd:check
 
-# Gerar todos os relatórios (Checkstyle + PMD + CPD)
+# Executar detecção de código duplicado (CPD):
+mvn cpd:check
+
+# Executar análise SpotBugs:
+mvn spotbugs:check
+
+# Roda O Spotbugs com GUI (interface gráfica interativa)
+mvn spotbugs:gui
+
+# Gerar os relatórios (Checkstyle + PMD + CPD)
 mvn clean site
+
+# Se também quiser rodar o SpotBugs você tem que compilar antes
+# O spotbugs analisa bytecode, então:
+mvn clean compile site
 ```
 
 Para visualizar os relatórios:
@@ -209,6 +222,7 @@ open target/site/project-reports.html      # Mac
 - `checkstyle.html` - Análise de estilo de código
 - `pmd.html` - Análise estática PMD
 - `cpd.html` - Detecção de código duplicado
+- `spotbugs.html` - Análise de bugs potenciais (SpotBugs)
 - `project-reports.html` - Página índice com todos os relatórios
 
 ### PMD (Análise Estática)
