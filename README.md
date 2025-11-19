@@ -112,7 +112,8 @@ O projeto possui uma suíte com **47 testes** (testes que só):
 
 ### Pré-requisitos
 
-- **Java 21 LTS** (instalado e configurado no PATH)
+- **Java 25 LTS** (instalado e configurado no PATH)
+    **Obs:** Se você não quiser instalar o java tudo bem, o projeto já vem com o Maven Wrapper que baixa uma versão do Java automaticamente.
 - **Maven** (opcional - o projeto usa Maven Wrapper)
 
 ### Opção 1: Maven (Recomendado) ⭐
@@ -226,14 +227,14 @@ open target/site/project-reports.html      # Mac
 
 - **Checkstyle**: `src/main/resources/checkstyle/google_checks.xml` (versão 12.1.2)
 - **PMD**: Versão 7.8.0 com 6 categorias de regras
-- **Java**: 21 LTS
+- **Java**: 25 LTS
 
 ## 🎯 Boas Práticas Aplicadas
 
 - **Arquitetura MVC** - Separação clara em Model, View, Controller
 - **Gerenciamento de Dependências** - Maven para build, testes e plugins
 - **Maven Wrapper** - Sem necessidade de instalação prévia do Maven
-- **Java 21 LTS** - Versão Long-Term Support mais recente
+- **Java 25 LTS** - Versão Long-Term Support mais recente
 - **Encapsulamento** - Atributos privados com getters/setters apropriados
 - **Validação de Dados** - Validação robusta em todas as camadas
   - ISBN-10 e ISBN-13 com algoritmo de checksum
