@@ -33,6 +33,7 @@
         <spotbugs.plugin.version>4.9.8.1</spotbugs.plugin.version>
         <spotbugs.version>4.9.8</spotbugs.version>
         <findsecbugs.plugin.version>1.14.0</findsecbugs.plugin.version>
+        <jdepend.plugin.version>2.1</jdepend.plugin.version>
     </properties>
 
     <build>
@@ -196,6 +197,14 @@
                 </configuration>
                 <!-- SpotBugs será executado manualmente com: mvn spotbugs:check -->
             </plugin>
+
+            <!-- Plugin JDepend -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jdepend-maven-plugin</artifactId>
+                <version>${jdepend.plugin.version}</version>
+                <!-- JDepend será executado manualmente com: mvn jdepend:generate -->
+            </plugin>
         </plugins>
     </build>
 
@@ -248,6 +257,11 @@
                     <effort>Max</effort>
                     <threshold>Low</threshold>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jdepend-maven-plugin</artifactId>
+                <version>${jdepend.plugin.version}</version>
             </plugin>
         </plugins>
     </reporting>

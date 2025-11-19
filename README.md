@@ -200,11 +200,10 @@ mvn spotbugs:check
 # Roda O Spotbugs com GUI (interface gráfica interativa)
 mvn spotbugs:gui
 
-# Gerar os relatórios (Checkstyle + PMD + CPD)
-mvn clean site
+# Executar análise JDepend (métricas de design e dependências entre pacotes):
+mvn jdepend:generate
 
-# Se também quiser rodar o SpotBugs você tem que compilar antes
-# O spotbugs analisa bytecode, então:
+# Gerar relatório completo com TODAS as análises (Checkstyle + PMD + CPD + SpotBugs + JDepend)
 mvn clean compile site
 ```
 
@@ -223,11 +222,18 @@ open target/site/project-reports.html      # Mac
 - `pmd.html` - Análise estática PMD
 - `cpd.html` - Detecção de código duplicado
 - `spotbugs.html` - Análise de bugs potenciais (SpotBugs)
+- `jdepend-report.html` - Métricas de design e dependências entre pacotes (JDepend)
 - `project-reports.html` - Página índice com todos os relatórios
 
-### PMD (Análise Estática)
+### Ferramentas de Análise de Código
 
+O projeto utiliza 5 ferramentas de análise de código:
 
+1. **Checkstyle** - Verifica estilo de código seguindo Google Style Guide
+2. **PMD** - Detecta problemas de código, bugs potenciais e code smells
+3. **CPD** - Detecta código duplicado (Copy/Paste Detector)
+4. **SpotBugs** - Encontra bugs através de análise de bytecode (inclui FindSecBugs para vulnerabilidades de segurança)
+5. **JDepend** - Analisa qualidade do design e dependências entre pacotes
 
 **Categorias de regras PMD configuradas:**
 - Best Practices (melhores práticas)
@@ -239,9 +245,11 @@ open target/site/project-reports.html      # Mac
 
 ### Configurações
 
-- **Checkstyle**: `src/main/resources/checkstyle/google_checks.xml` (versão 12.1.2)
-- **PMD**: Versão 7.8.0 com 6 categorias de regras
-- **Java**: 25 LTS
+- **Checkstyle**: Google Style Guide 12.1.2 (`src/main/resources/checkstyle/google_checks.xml`)
+- **PMD**: Versão 7.18.0 com 6 categorias de regras
+- **SpotBugs**: Versão 4.9.8 (inclui FindSecBugs 1.14.0)
+- **JDepend**: Versão 2.1
+- **Java**: 25
 
 ## 🎯 Boas Práticas Aplicadas
 
