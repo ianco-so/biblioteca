@@ -116,10 +116,25 @@ mvn clean verify sonar:sonar "-Dsonar.login=SEU_TOKEN"
 - No PowerShell use aspas ao redor de cada `-D` é necessário no powershell. Se você usar cmd.exe ou terminal Linux/Mac, não precisa das aspas.
 - É importante dizer que isso muda conforme a versão do SonarQube. Consulte a documentação oficial se necessário.
 
+## Para rodar as anáslises do CK:
+
+No Windows:
+```powershell
+.\scripts\run_ck.bat
+```
+Ou em Linux/Mac:
+```bash
+./scripts/run_ck.sh
+```
+
+Os resultados ficarão na pasta [.\target\ck-results](./target/ck-results/class.csv)
+
 ## Compilando com o Error Prone da Google (Opcional):
 
 Existe um perfil Maven chamado `analysis` que ativa o plugin Error Prone da Google para análise estática adicional durante a compilação.
 Para usar, compile com o perfil `analysis`:
+
+
 ```powershell
 mvn clean compile -P analysis
 ```

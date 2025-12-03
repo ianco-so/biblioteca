@@ -12,6 +12,8 @@
 
 # Package Files #
 *.jar
+# Não permite arquivos .jar na raiz, mas permite dentro da pasta tools
+!tools/*.jar 
 *.war
 *.nar
 *.ear
