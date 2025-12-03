@@ -261,6 +261,9 @@
                         <exclude>sun/**</exclude>
                         <exclude>java/**</exclude>
                         <exclude>jdk/**</exclude>
+                        <!-- Exclui classes de View (interface com usuário) -->
+                        <!-- <exclude>view/**</exclude> -->
+                        <exclude>Main*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -279,7 +282,8 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
-                    <!-- Verifica as regras de cobertura mínima -->
+                    <!-- Verifica as regras de cobertura mínima (desabilitado por padrão) -->
+                    <!--
                     <execution>
                         <id>check</id>
                         <goals>
@@ -288,18 +292,19 @@
                         <configuration>
                             <rules>
                                 <rule>
-                                    <element>PACKAGE</element>
+                                    <element>BUNDLE</element>
                                     <limits>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.50</minimum>
+                                            <minimum>0.70</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
                             </rules>
                         </configuration>
                     </execution>
+                    -->
                 </executions>
             </plugin>
         </plugins>

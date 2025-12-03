@@ -61,12 +61,10 @@ Este guia explica, passo a passo, como gerar e visualizar os relatórios de aná
 SpotBugs precisa de classes compiladas. Execute `compile` antes do `site`.
 
 ```powershell
-# comando recomendado (gera site com Checkstyle, PMD, CPD, SpotBugs, JDepend)
-mvn clean compile site
-# Se já tiver compilado (ou se não quiser o SpotBugs):
+# comando recomendado (gera site com Checkstyle, PMD, CPD, SpotBugs, JDepend, JaCoCo)
+mvn clean compile test site #Compile para o SpotBugs e test para o JaCoCo
+# Se não quiser o SpotBugs ou o JaCoCo, use:
 mvn clean site
-# Para ver os relatórios do JaCoCo (cobertura de testes):
-mvn clean test site
 ```
 
 Os relatórios HTML serão gerados em `target/site/`.
@@ -127,11 +125,11 @@ mvn clean verify sonar:sonar "-Dsonar.login=SEU_TOKEN"
 
 No Windows:
 ```powershell
-.\scripts\run_ck.bat
+.\scripts\run-ck.bat
 ```
 Ou em Linux/Mac:
 ```bash
-./scripts/run_ck.sh
+./scripts/run-ck.sh
 ```
 
 Os resultados ficarão na pasta [.\target\ck-results](./target/ck-results/class.csv)
