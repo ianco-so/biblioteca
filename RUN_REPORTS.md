@@ -79,13 +79,13 @@ Os relatórios HTML serão gerados em `target/site/`.
     open target/site/project-reports.html
     ```
 
-### Enviar análise para SonarQube (opção centralizada)
+## Enviar análise para SonarQube (opção centralizada)
 
 Existem duas formas comuns de rodar o servidor SonarQube:
 - Localmente (instalação manual)
 - Via Docker (recomendado para facilidade)
 
-#### A) Usando Docker (recomendado)
+### A) Usando Docker (recomendado)
 ```powershell
 # Iniciar SonarQube (no diretório do projeto com docker-compose.yml)
 docker-compose up -d
@@ -94,7 +94,7 @@ docker logs -f sonarqube-biblioteca
 # Acesse http://localhost:9000 e crie o projeto se necessário
 ```
 
-#### B) Usando SonarQube local (instalação manual)
+### B) Usando SonarQube local (instalação manual)
 - Baixe SonarQube Community (ideia: usar a LTS 10.x)
 - Extraia em `\sonarqube` e execute `StartSonar.bat` (Windows) ou `sonar.sh` (Linux/Mac)
     Nesse caso lembre-se que o SonaQube usa o Java (21 e 17 foram testados). Então certifique-se de estar com java o no seu ambiente.
@@ -112,6 +112,14 @@ Para cada versão do SonarQube isso pode ser diferente. Aqui está a forma para 
 mvn clean verify sonar:sonar "-Dsonar.login=SEU_TOKEN"
 ```
 
-Observações importantes:
+#### Observações importantes:
 - No PowerShell use aspas ao redor de cada `-D` é necessário no powershell. Se você usar cmd.exe ou terminal Linux/Mac, não precisa das aspas.
 - É importante dizer que isso muda conforme a versão do SonarQube. Consulte a documentação oficial se necessário.
+
+## Compilando com o Error Prone da Google (Opcional):
+
+Existe um perfil Maven chamado `analysis` que ativa o plugin Error Prone da Google para análise estática adicional durante a compilação.
+Para usar, compile com o perfil `analysis`:
+```powershell
+mvn clean compile -P analysis
+```
