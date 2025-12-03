@@ -51,6 +51,11 @@ Este guia explica, passo a passo, como gerar e visualizar os relatórios de aná
     mvn jdepend:generate
     ```
 
+- JaCoCo
+    ```powershell
+    mvn test jacoco:report
+    ```
+
 ### Gerar todos os relatórios HTML locais (site Maven)
 
 SpotBugs precisa de classes compiladas. Execute `compile` antes do `site`.
@@ -60,6 +65,8 @@ SpotBugs precisa de classes compiladas. Execute `compile` antes do `site`.
 mvn clean compile site
 # Se já tiver compilado (ou se não quiser o SpotBugs):
 mvn clean site
+# Para ver os relatórios do JaCoCo (cobertura de testes):
+mvn clean test site
 ```
 
 Os relatórios HTML serão gerados em `target/site/`.

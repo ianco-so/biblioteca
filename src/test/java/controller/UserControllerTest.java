@@ -1,185 +1,145 @@
 package controller;
 
 import model.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
 
-public class UserControllerTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static void main(String[] args) {
-        UserControllerTest test = new UserControllerTest();
-        
-        System.out.println("=== Testes do UserController ===");
-        
-        System.out.println("\n\t\tregisterUser()");
-        test.testRegisterUser();
-        test.testRegisterUserWithDuplicateId();
-        test.testRegisterUserWithInvalidData();
+@DisplayName("Testes do UserController")
+class UserControllerTest {
 
-        System.out.println("\n\t\tfindById()");
-        test.testFindById();
-        test.testFindByIdNotFound();
-        
-        System.out.println("\n\t\tgetAllUsers()");
-        test.testGetAllUsers();
-        
-        System.out.println("\n\t\tgetUserLoanHistory()");
-        test.testGetUserLoanHistory();
-        test.testGetUserLoanHistoryUserNotFound();
-        
-        System.out.println("\n==========================");
-    }
+    private UserController controller;
 
-    private void printSuccess() {
-        System.out.println("success!");
+    @BeforeEach
+    void setUp() {
+        controller = new UserController();
     }
 
     // ========== Testes de registerUser ==========
 
-    public void testRegisterUser() {
-        System.out.print("testRegisterUser: ");
-        
-        UserController controller = new UserController();
+    @Test
+    @DisplayName("Deve registrar um usuário com sucesso")
+    void testRegisterUser() {
         User user = controller.registerUser("João Silva", "user123");
         
-        assert user != null : "Usuário deveria ter sido criado";
-        assert user.getName().equals("João Silva") : "Nome incorreto";
-        assert user.getID().equals("user123") : "ID incorreto";
-        assert controller.getAllUsers().size() == 1 : "Deveria ter 1 usuário";
-        
-        printSuccess();
+        assertNotNull(user, "Usuário deveria ter sido criado");
+        assertEquals("João Silva", user.getName(), "Nome incorreto");
+        assertEquals("user123", user.getID(), "ID incorreto");
+        assertEquals(1, controller.getAllUsers().size(), "Deveria ter 1 usuário");
     }
 
-    public void testRegisterUserWithDuplicateId() {
-        System.out.print("testRegisterUserWithDuplicateId: ");
-        
-        var controller = new UserController();
+    @Test
+    @DisplayName("Deve lançar exceção ao registrar usuário com ID duplicado")
+    void testRegisterUserWithDuplicateId() {
         controller.registerUser("João Silva", "user123");
         
-        // Registrar novamente não deve adicionar outro usuário
-        try {
-            controller.registerUser("Maria Santos", "user123");
-        } catch (IllegalStateException e) {
-            assert e.getMessage().contains("já está cadastrado") : "Mensagem de erro incorreta";
-        }
-        assert controller.getAllUsers().size() == 1 : "Não deveria ter adicionado usuário duplicado";
+        IllegalStateException exception = assertThrows(
+            IllegalStateException.class,
+            () -> controller.registerUser("Maria Santos", "user123")
+        );
         
-        printSuccess();
+        assertTrue(exception.getMessage().contains("já está cadastrado"), "Mensagem de erro incorreta");
+        assertEquals(1, controller.getAllUsers().size(), "Não deveria ter adicionado usuário duplicado");
     }
 
-    public void testRegisterUserWithInvalidData() {
-        System.out.print("testRegisterUserWithInvalidData: ");
+    @Test
+    @DisplayName("Deve lançar exceção ao registrar usuário com dados inválidos")
+    void testRegisterUserWithInvalidData() {
+        // Nome null
+        IllegalArgumentException exception1 = assertThrows(
+            IllegalArgumentException.class,
+            () -> controller.registerUser(null, "user123")
+        );
+        assertTrue(exception1.getMessage().contains("não podem ser nulos"), "Mensagem de erro incorreta");
         
-        UserController controller = new UserController();
+        // ID vazio
+        IllegalArgumentException exception2 = assertThrows(
+            IllegalArgumentException.class,
+            () -> controller.registerUser("João Silva", "")
+        );
+        assertTrue(exception2.getMessage().contains("não pode ser vazio"), "Mensagem de erro incorreta");
         
-        try {
-            controller.registerUser(null, "user123");
-            assert false : "Deveria lançar IllegalArgumentException para nome null";
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("não podem ser nulos") : "Mensagem de erro incorreta";
-        }
+        // Nome muito curto
+        IllegalArgumentException exception3 = assertThrows(
+            IllegalArgumentException.class,
+            () -> controller.registerUser("Jo", "user123")
+        );
+        assertTrue(exception3.getMessage().contains("muito curto"), "Mensagem de erro incorreta");
         
-        try {
-            controller.registerUser("João Silva", "");
-            assert false : "Deveria lançar IllegalArgumentException para ID vazio";
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("não pode ser vazio") : "Mensagem de erro incorreta";
-        }
-        
-        try {
-            controller.registerUser("Jo", "user123");
-            assert false : "Deveria lançar IllegalArgumentException para nome muito curto";
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("muito curto") : "Mensagem de erro incorreta";
-        }
-        
-        try {
-            controller.registerUser("João Silva", "user@123");
-            assert false : "Deveria lançar IllegalArgumentException para ID com caracteres especiais";
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("alfanumérico") : "Mensagem de erro incorreta";
-        }
-        
-        printSuccess();
+        // ID com caracteres especiais
+        IllegalArgumentException exception4 = assertThrows(
+            IllegalArgumentException.class,
+            () -> controller.registerUser("João Silva", "user@123")
+        );
+        assertTrue(exception4.getMessage().contains("alfanumérico"), "Mensagem de erro incorreta");
     }
 
     // ========== Testes de findById ==========
 
-    public void testFindById() {
-        System.out.print("testFindById: ");
-        
-        UserController controller = new UserController();
+    @Test
+    @DisplayName("Deve encontrar usuário por ID")
+    void testFindById() {
         controller.registerUser("João Silva", "user123");
         
         Optional<User> found = controller.findById("user123");
         
-        assert found.isPresent() : "Usuário deveria ter sido encontrado";
-        assert found.get().getName().equals("João Silva") : "Nome incorreto";
-        
-        printSuccess();
+        assertTrue(found.isPresent(), "Usuário deveria ter sido encontrado");
+        assertEquals("João Silva", found.get().getName(), "Nome incorreto");
     }
 
-    public void testFindByIdNotFound() {
-        System.out.print("testFindByIdNotFound: ");
-        
-        UserController controller = new UserController();
+    @Test
+    @DisplayName("Deve retornar vazio quando usuário não for encontrado")
+    void testFindByIdNotFound() {
         controller.registerUser("João Silva", "user123");
         
         Optional<User> found = controller.findById("user999");
         
-        assert found.isEmpty() : "Nenhum usuário deveria ter sido encontrado";
-        
-        printSuccess();
+        assertTrue(found.isEmpty(), "Nenhum usuário deveria ter sido encontrado");
     }
 
     // ========== Testes de getAllUsers ==========
 
-    public void testGetAllUsers() {
-        System.out.print("testGetAllUsers: ");
-        
-        UserController controller = new UserController();
+    @Test
+    @DisplayName("Deve retornar todos os usuários cadastrados")
+    void testGetAllUsers() {
         controller.registerUser("João Silva", "user123");
         controller.registerUser("Maria Santos", "user456");
         controller.registerUser("Pedro Oliveira", "user789");
         
         List<User> users = controller.getAllUsers();
         
-        assert users.size() == 3 : "Deveria ter 3 usuários";
-        assert users.get(0).getName().equals("João Silva") : "Primeiro usuário incorreto";
-        assert users.get(1).getName().equals("Maria Santos") : "Segundo usuário incorreto";
-        assert users.get(2).getName().equals("Pedro Oliveira") : "Terceiro usuário incorreto";
-        
-        printSuccess();
+        assertEquals(3, users.size(), "Deveria ter 3 usuários");
+        assertEquals("João Silva", users.get(0).getName(), "Primeiro usuário incorreto");
+        assertEquals("Maria Santos", users.get(1).getName(), "Segundo usuário incorreto");
+        assertEquals("Pedro Oliveira", users.get(2).getName(), "Terceiro usuário incorreto");
     }
 
     // ========== Testes de getUserLoanHistory ==========
 
-    public void testGetUserLoanHistory() {
-        System.out.print("testGetUserLoanHistory: ");
-        
-        UserController controller = new UserController();
+    @Test
+    @DisplayName("Deve retornar histórico vazio para usuário novo")
+    void testGetUserLoanHistory() {
         controller.registerUser("João Silva", "user123");
         
         var loans = controller.getUserLoanHistory("user123");
         
-        assert loans != null : "Histórico não deveria ser null";
-        assert loans.size() == 0 : "Histórico deveria estar vazio";
-        
-        printSuccess();
+        assertNotNull(loans, "Histórico não deveria ser null");
+        assertEquals(0, loans.size(), "Histórico deveria estar vazio");
     }
 
-    public void testGetUserLoanHistoryUserNotFound() {
-        System.out.print("testGetUserLoanHistoryUserNotFound: ");
+    @Test
+    @DisplayName("Deve lançar exceção ao buscar histórico de usuário inexistente")
+    void testGetUserLoanHistoryUserNotFound() {
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> controller.getUserLoanHistory("user999")
+        );
         
-        UserController controller = new UserController();
-        
-        try {
-            controller.getUserLoanHistory("user999");
-            assert false : "Deveria lançar IllegalArgumentException";
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("não encontrado") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+        assertTrue(exception.getMessage().contains("não encontrado"), "Mensagem de erro incorreta");
     }
 }

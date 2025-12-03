@@ -1,51 +1,30 @@
 package controller;
 
-// import controller.BookController;
 import model.Book;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
 
-public class BookControllerTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static void main(String[] args) {
-        BookControllerTest test = new BookControllerTest();
-        
-        System.out.println("=== Testes do BookController ===");
-        
-        System.out.println("\n\t\taddBook()");
-        test.testAddBook();
-        test.testAddBookWithDuplicateIsbn();
-        test.testAddBookWithInvalidIsbn();
+@DisplayName("Testes do BookController")
+class BookControllerTest {
 
-        System.out.println("\n\t\tgetAllBooks()");
-        test.testGetAllBooks();
-        
-        System.out.println("\n\t\tfindByIsbn()");
-        test.testFindByIsbn();
-        test.testFindByIsbnNotFound();
-        test.testFindByIsbnWithFormatting();
-        
-        System.out.println("\n\t\thasBook()");
-        test.testHasBook();
-        
-        System.out.println("\n\t\tremoveByIsbn()");
-        test.testRemoveByIsbn();
-        test.testRemoveByIsbnNotFound();
-        
-        System.out.println("\n==========================");
-    }
+    private BookController controller;
 
-    private void printSuccess() {
-        System.out.println("success!");
+    @BeforeEach
+    void setUp() {
+        controller = new BookController();
     }
 
     // ========== Testes de addBook ==========
 
-    public void testAddBook() {
-        System.out.print("testAddBook: ");
-        
-        BookController controller = new BookController();
+    @Test
+    @DisplayName("Deve adicionar um livro com sucesso")
+    void testAddBook() {
         Book book = controller.addBook(
             "Clean Code",
             "978-0132350884",
@@ -55,17 +34,14 @@ public class BookControllerTest {
             true
         );
         
-        assert book != null : "Livro deveria ter sido criado";
-        assert book.getTitle().equals("Clean Code") : "Título incorreto";
-        assert controller.getAllBooks().size() == 1 : "Deveria ter 1 livro";
-        
-        printSuccess();
+        assertNotNull(book, "Livro deveria ter sido criado");
+        assertEquals("Clean Code", book.getTitle(), "Título incorreto");
+        assertEquals(1, controller.getAllBooks().size(), "Deveria ter 1 livro");
     }
 
-    public void testAddBookWithDuplicateIsbn() {
-        System.out.print("testAddBookWithDuplicateIsbn: ");
-        
-        BookController controller = new BookController();
+    @Test
+    @DisplayName("Deve lançar exceção ao adicionar livro com ISBN duplicado")
+    void testAddBookWithDuplicateIsbn() {
         controller.addBook(
             "Book 1", 
             "978-0132350884", 
@@ -75,49 +51,44 @@ public class BookControllerTest {
             true
         );
         
-        try {
-            controller.addBook(
+        IllegalStateException exception = assertThrows(
+            IllegalStateException.class,
+            () -> controller.addBook(
                 "Book 2",
                 "978-0132350884", 
                 "Author 2", 
                 "País 2", 
                 3, 
                 false
-            );
-            assert false : "Deveria lançar IllegalStateException";
-        } catch (IllegalStateException e) {
-            assert e.getMessage().contains("já existe") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+            )
+        );
+        
+        assertTrue(exception.getMessage().contains("já existe"), "Mensagem de erro incorreta");
     }
 
-    public void testAddBookWithInvalidIsbn() {
-        System.out.print("testAddBookWithInvalidIsbn: ");
-        
-        BookController controller = new BookController();
-        
-        try {
-            controller.addBook(
+    @Test
+    @DisplayName("Deve lançar exceção ao adicionar livro com ISBN inválido")
+    void testAddBookWithInvalidIsbn() {
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> controller.addBook(
                 "Clean Code", 
                 "123-invalid", 
                 "Robert Martin", 
                 "Americana", 
                 5, 
                 true
-            );
-            assert false : "Deveria lançar IllegalArgumentException";
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("ISBN inválido") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+            )
+        );
+        
+        assertTrue(exception.getMessage().contains("ISBN inválido"), "Mensagem de erro incorreta");
     }
 
     // ========== Testes de getAllBooks ==========
 
-    public void testGetAllBooks() {
-        System.out.print("testGetAllBooks: ");
-        
-        BookController controller = new BookController();
+    @Test
+    @DisplayName("Deve retornar todos os livros cadastrados")
+    void testGetAllBooks() {
         controller.addBook(
             "Book 1", 
             "978-0132350884", 
@@ -137,19 +108,16 @@ public class BookControllerTest {
         
         List<Book> books = controller.getAllBooks();
         
-        assert books.size() == 2 : "Deveria ter 2 livros";
-        assert books.get(0).getTitle().equals("Book 1") : "Primeiro livro incorreto";
-        assert books.get(1).getTitle().equals("Book 2") : "Segundo livro incorreto";
-        
-        printSuccess();
+        assertEquals(2, books.size(), "Deveria ter 2 livros");
+        assertEquals("Book 1", books.get(0).getTitle(), "Primeiro livro incorreto");
+        assertEquals("Book 2", books.get(1).getTitle(), "Segundo livro incorreto");
     }
 
     // ========== Testes de findByIsbn ==========
 
-    public void testFindByIsbn() {
-        System.out.print("testFindByIsbn: ");
-        
-        BookController controller = new BookController();
+    @Test
+    @DisplayName("Deve encontrar livro por ISBN")
+    void testFindByIsbn() {
         controller.addBook(
             "Clean Code", 
             "978-0132350884", 
@@ -161,16 +129,13 @@ public class BookControllerTest {
         
         Optional<Book> found = controller.findByIsbn("9780132350884");
         
-        assert found.isPresent() : "Livro deveria ter sido encontrado";
-        assert found.get().getTitle().equals("Clean Code") : "Livro incorreto";
-        
-        printSuccess();
+        assertTrue(found.isPresent(), "Livro deveria ter sido encontrado");
+        assertEquals("Clean Code", found.get().getTitle(), "Livro incorreto");
     }
 
-    public void testFindByIsbnNotFound() {
-        System.out.print("testFindByIsbnNotFound: ");
-        
-        BookController controller = new BookController();
+    @Test
+    @DisplayName("Deve retornar vazio quando ISBN não for encontrado")
+    void testFindByIsbnNotFound() {
         controller.addBook(
             "Clean Code", 
             "978-0132350884", 
@@ -182,15 +147,12 @@ public class BookControllerTest {
         
         Optional<Book> found = controller.findByIsbn("9780000000000");
         
-        assert found.isEmpty() : "Nenhum livro deveria ter sido encontrado";
-        
-        printSuccess();
+        assertTrue(found.isEmpty(), "Nenhum livro deveria ter sido encontrado");
     }
 
-    public void testFindByIsbnWithFormatting() {
-        System.out.print("testFindByIsbnWithFormatting: ");
-        
-        BookController controller = new BookController();
+    @Test
+    @DisplayName("Deve encontrar livro por ISBN com formatação")
+    void testFindByIsbnWithFormatting() {
         controller.addBook(
             "Clean Code", 
             "9780132350884", 
@@ -203,18 +165,15 @@ public class BookControllerTest {
         Optional<Book> found1 = controller.findByIsbn("978-0-13235-088-4");
         Optional<Book> found2 = controller.findByIsbn("978 0 13235 088 4");
         
-        assert found1.isPresent() : "Deveria encontrar com hífens";
-        assert found2.isPresent() : "Deveria encontrar com espaços";
-        
-        printSuccess();
+        assertTrue(found1.isPresent(), "Deveria encontrar com hífens");
+        assertTrue(found2.isPresent(), "Deveria encontrar com espaços");
     }
 
     // ========== Testes de hasBook ==========
 
-    public void testHasBook() {
-        System.out.print("testHasBook: ");
-        
-        BookController controller = new BookController();
+    @Test
+    @DisplayName("Deve verificar se livro existe por ISBN")
+    void testHasBook() {
         controller.addBook(
             "Clean Code", 
             "978-0132350884", 
@@ -224,23 +183,16 @@ public class BookControllerTest {
             true
         );
         
-        boolean has1 = controller.hasBook("9780132350884");
-        boolean has2 = controller.hasBook("978-0-13235-088-4");
-        boolean has3 = controller.hasBook("9780000000000");
-        
-        assert has1 == true : "Deveria ter o livro";
-        assert has2 == true : "Deveria encontrar com hífens";
-        assert has3 == false : "Não deveria ter este livro";
-        
-        printSuccess();
+        assertTrue(controller.hasBook("9780132350884"), "Deveria ter o livro");
+        assertTrue(controller.hasBook("978-0-13235-088-4"), "Deveria encontrar com hífens");
+        assertFalse(controller.hasBook("9780000000000"), "Não deveria ter este livro");
     }
 
     // ========== Testes de removeByIsbn ==========
 
-    public void testRemoveByIsbn() {
-        System.out.print("testRemoveByIsbn: ");
-        
-        BookController controller = new BookController();
+    @Test
+    @DisplayName("Deve remover livro por ISBN")
+    void testRemoveByIsbn() {
         controller.addBook(
             "Clean Code", 
             "978-0132350884", 
@@ -260,17 +212,14 @@ public class BookControllerTest {
         
         boolean removed = controller.removeByIsbn("9780132350884");
         
-        assert removed == true : "Livro deveria ter sido removido";
-        assert controller.getAllBooks().size() == 1 : "Deveria restar 1 livro";
-        assert controller.hasBook("9780132350884") == false : "Livro não deveria mais existir";
-        
-        printSuccess();
+        assertTrue(removed, "Livro deveria ter sido removido");
+        assertEquals(1, controller.getAllBooks().size(), "Deveria restar 1 livro");
+        assertFalse(controller.hasBook("9780132350884"), "Livro não deveria mais existir");
     }
 
-    public void testRemoveByIsbnNotFound() {
-        System.out.print("testRemoveByIsbnNotFound: ");
-        
-        BookController controller = new BookController();
+    @Test
+    @DisplayName("Deve retornar false ao tentar remover livro inexistente")
+    void testRemoveByIsbnNotFound() {
         controller.addBook(
             "Clean Code", 
             "978-0132350884", 
@@ -282,9 +231,7 @@ public class BookControllerTest {
         
         boolean removed = controller.removeByIsbn("9780000000000");
         
-        assert removed == false : "Remoção deveria ter falhado";
-        assert controller.getAllBooks().size() == 1 : "Livro não deveria ter sido removido";
-        
-        printSuccess();
+        assertFalse(removed, "Remoção deveria ter falhado");
+        assertEquals(1, controller.getAllBooks().size(), "Livro não deveria ter sido removido");
     }
 }

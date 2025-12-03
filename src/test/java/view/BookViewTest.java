@@ -1,27 +1,17 @@
 package view;
 
 import controller.BookController;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-public class BookViewTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static void main(String[] args) {
-        BookViewTest test = new BookViewTest();
-        
-        System.out.println("=== Testes do BookView ===");
-        
-        System.out.println("\n\t\tTeste básico");
-        test.testBookControllerIntegration();
-        
-        System.out.println("\n==========================");
-    }
+@DisplayName("Testes do BookView")
+class BookViewTest {
 
-    private void printSuccess() {
-        System.out.println("success!");
-    }
-
-    public void testBookControllerIntegration() {
-        System.out.print("testBookControllerIntegration: ");
-        
+    @Test
+    @DisplayName("Deve integrar com BookController corretamente")
+    void testBookControllerIntegration() {
         BookController controller = new BookController();
         
         controller.addBook(
@@ -34,9 +24,7 @@ public class BookViewTest {
         );
         
         var books = controller.getAllBooks();
-        assert books.size() == 1 : "Controller deveria ter 1 livro";
-        assert books.get(0).getTitle().equals("Clean Code") : "Título incorreto";
-        
-        printSuccess();
+        assertEquals(1, books.size(), "Controller deveria ter 1 livro");
+        assertEquals("Clean Code", books.get(0).getTitle(), "Título incorreto");
     }
 }

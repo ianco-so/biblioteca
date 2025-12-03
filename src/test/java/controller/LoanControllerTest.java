@@ -2,56 +2,27 @@ package controller;
 
 import model.Loan;
 import model.enums.LoanFilter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public class LoanControllerTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static void main(String[] args) {
-        LoanControllerTest test = new LoanControllerTest();
-        
-        System.out.println("=== Testes do LoanController ===");
-        
-        System.out.println("\n\t\tloan()");
-        test.testLoanTwoTimesWithSameUserAndBookPhysical();
-        test.testLoanTwoTimesWithSameUserAndBookDigital();
-        test.testLoanPhysicalBook();
-        test.testLoanDigitalBook();
-        test.testLoanWithoutCopies();
-        test.testLoanDigitalNotAvailable();
-        test.testLoanUserNotFound();
-        test.testLoanBookNotFound();
+@DisplayName("Testes do LoanController")
+class LoanControllerTest {
 
-        System.out.println("\n\t\treturnLoanedBook()");
-        test.testReturnLoanedBook();
-        test.testReturnLoanedBookNotFound();
-        test.testReturnAlreadyReturned();
-        
-        System.out.println("\n\t\textendDueDate()");
-        test.testExtendDueDate();
-        test.testExtendDueDateLoanNotFound();
-        test.testExtendDueDateInvalid();
-        
-        System.out.println("\n\t\tgetLoansWithFilter()");
-        test.testGetLoansWithFilterAll();
-        test.testGetLoansWithFilterOpen();
-        test.testGetLoansWithFilterClosed();
-        
-        System.out.println("\n\t\tlistLoansSortedByLoanDateDesc()");
-        test.testListLoansSortedByLoanDateDesc();
-        
-        System.out.println("\n==========================");
-    }
+    private LoanController controller;
+    private BookController bookController;
+    private UserController userController;
 
-    private void printSuccess() {
-        System.out.println("success!");
-    }
-
-    private LoanController setupController() {
-        BookController bookController = new BookController();
-        UserController userController = new UserController();
+    @BeforeEach
+    void setUp() {
+        bookController = new BookController();
+        userController = new UserController();
         
         bookController.addBook(
             "Clean Code", 
@@ -73,316 +44,248 @@ public class LoanControllerTest {
         userController.registerUser("João Silva", "user123");
         userController.registerUser("Maria Santos", "user456");
         
-        return new LoanController(bookController, userController);
+        controller = new LoanController(bookController, userController);
     }
 
     // ========== Testes de loan ==========
 
-    public void testLoanTwoTimesWithSameUserAndBookPhysical() {
-        System.out.print("testLoanTwoTimesWithSameUserAndBookPhysical: ");
-        
-        LoanController controller = setupController();
+    @Test
+    @DisplayName("Deve lançar exceção ao emprestar mesmo livro físico duas vezes para o mesmo usuário")
+    void testLoanTwoTimesWithSameUserAndBookPhysical() {
         controller.loan("user123", "978-0132350884", false);
         
-        try {
-            controller.loan("user123", "978-0132350884", false);
-            assert false : "Deveria lançar IllegalStateException";
-        } catch (IllegalStateException e) {
-            assert e.getMessage().contains("Usuário já possui um empréstimo aberto") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+        IllegalStateException exception = assertThrows(
+            IllegalStateException.class,
+            () -> controller.loan("user123", "978-0132350884", false)
+        );
+        
+        assertTrue(exception.getMessage().contains("Usuário já possui um empréstimo aberto"), 
+            "Mensagem de erro incorreta");
     }
 
-    public void testLoanTwoTimesWithSameUserAndBookDigital() {
-        System.out.print("testLoanTwoTimesWithSameUserAndBookDigital: ");
-        
-        LoanController controller = setupController();
+    @Test
+    @DisplayName("Deve lançar exceção ao emprestar mesmo livro digital duas vezes para o mesmo usuário")
+    void testLoanTwoTimesWithSameUserAndBookDigital() {
         controller.loan("user123", "978-0132350884", true);
         
-        try {
-            controller.loan("user123", "978-0132350884", true);
-            assert false : "Deveria lançar IllegalStateException";
-        } catch (IllegalStateException e) {
-            assert e.getMessage().contains("Usuário já possui um empréstimo aberto") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+        IllegalStateException exception = assertThrows(
+            IllegalStateException.class,
+            () -> controller.loan("user123", "978-0132350884", true)
+        );
+        
+        assertTrue(exception.getMessage().contains("Usuário já possui um empréstimo aberto"), 
+            "Mensagem de erro incorreta");
     }
 
-    public void testLoanPhysicalBook() {
-        System.out.print("testLoanPhysicalBook: ");
-        
-        LoanController controller = setupController();
+    @Test
+    @DisplayName("Deve emprestar livro físico com sucesso")
+    void testLoanPhysicalBook() {
         Loan loan = controller.loan("user123", "978-0132350884", false);
         
-        assert loan != null : "Empréstimo deveria ter sido criado";
-        assert loan.getUser().getID().equals("user123") : "Usuário incorreto";
-        assert loan.getBook().getIsbn().equals("9780132350884") : "Livro incorreto";
-        assert !loan.isReturned() : "Empréstimo deveria estar aberto";
-        assert controller.getAllLoans().size() == 1 : "Deveria ter 1 empréstimo";
-        
-        printSuccess();
+        assertNotNull(loan, "Empréstimo deveria ter sido criado");
+        assertEquals("user123", loan.getUser().getID(), "Usuário incorreto");
+        assertEquals("9780132350884", loan.getBook().getIsbn(), "Livro incorreto");
+        assertFalse(loan.isReturned(), "Empréstimo deveria estar aberto");
+        assertEquals(1, controller.getAllLoans().size(), "Deveria ter 1 empréstimo");
     }
 
-    public void testLoanDigitalBook() {
-        System.out.print("testLoanDigitalBook: ");
-        
-        LoanController controller = setupController();
+    @Test
+    @DisplayName("Deve emprestar livro digital com sucesso")
+    void testLoanDigitalBook() {
         Loan loan = controller.loan("user123", "978-0132350884", true);
         
-        assert loan != null : "Empréstimo deveria ter sido criado";
-        assert !loan.isReturned() : "Empréstimo deveria estar aberto";
-        
-        printSuccess();
+        assertNotNull(loan, "Empréstimo deveria ter sido criado");
+        assertFalse(loan.isReturned(), "Empréstimo deveria estar aberto");
     }
 
-    public void testLoanWithoutCopies() {
-        System.out.print("testLoanWithoutCopies: ");
+    @Test
+    @DisplayName("Deve lançar exceção ao emprestar livro sem cópias disponíveis")
+    void testLoanWithoutCopies() {
+        IllegalStateException exception = assertThrows(
+            IllegalStateException.class,
+            () -> controller.loan("user123", "978-0306406157", false)
+        );
         
-        LoanController controller = setupController();
-        
-        try {
-            controller.loan("user123", "978-0306406157", false);
-            assert false : "Deveria lançar IllegalStateException";
-        } catch (IllegalStateException e) {
-            assert e.getMessage().contains("Sem cópias disponíveis") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+        assertTrue(exception.getMessage().contains("Sem cópias disponíveis"), "Mensagem de erro incorreta");
     }
 
-    public void testLoanDigitalNotAvailable() {
-        System.out.print("testLoanDigitalNotAvailable: ");
+    @Test
+    @DisplayName("Deve lançar exceção ao emprestar livro digital não disponível")
+    void testLoanDigitalNotAvailable() {
+        IllegalStateException exception = assertThrows(
+            IllegalStateException.class,
+            () -> controller.loan("user123", "978-0306406157", true)
+        );
         
-        LoanController controller = setupController();
-        
-        try {
-            controller.loan("user123", "978-0306406157", true);
-            assert false : "Deveria lançar IllegalStateException";
-        } catch (IllegalStateException e) {
-            assert e.getMessage().contains("não possui versão digital") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+        assertTrue(exception.getMessage().contains("não possui versão digital"), "Mensagem de erro incorreta");
     }
 
-    public void testLoanUserNotFound() {
-        System.out.print("testLoanUserNotFound: ");
+    @Test
+    @DisplayName("Deve lançar exceção ao emprestar para usuário inexistente")
+    void testLoanUserNotFound() {
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> controller.loan("user999", "978-0132350884", false)
+        );
         
-        LoanController controller = setupController();
-        
-        try {
-            controller.loan("user999", "978-0132350884", false);
-            assert false : "Deveria lançar IllegalArgumentException";
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("Usuário não encontrado") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+        assertTrue(exception.getMessage().contains("Usuário não encontrado"), "Mensagem de erro incorreta");
     }
 
-    public void testLoanBookNotFound() {
-        System.out.print("testLoanBookNotFound: ");
+    @Test
+    @DisplayName("Deve lançar exceção ao emprestar livro inexistente")
+    void testLoanBookNotFound() {
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> controller.loan("user123", "978-0000000000", false)
+        );
         
-        LoanController controller = setupController();
-        
-        try {
-            controller.loan("user123", "978-0000000000", false);
-            assert false : "Deveria lançar IllegalArgumentException";
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("Livro não encontrado") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+        assertTrue(exception.getMessage().contains("Livro não encontrado"), "Mensagem de erro incorreta");
     }
 
     // ========== Testes de returnLoanedBook ==========
 
-    public void testReturnLoanedBook() {
-        System.out.print("testReturnLoanedBook: ");
-        
-        LoanController controller = setupController();
+    @Test
+    @DisplayName("Deve devolver livro emprestado com sucesso")
+    void testReturnLoanedBook() {
         controller.loan("user123", "978-0132350884", false);
         
         Optional<Loan> returned = controller.returnLoanedBook("user123", "978-0132350884");
         
-        assert returned.isPresent() : "Deveria retornar o empréstimo";
-        assert returned.get().isReturned() : "Empréstimo deveria estar devolvido";
-        assert returned.get().getReturnDate() != null : "Data de devolução deveria estar preenchida";
-        
-        printSuccess();
+        assertTrue(returned.isPresent(), "Deveria retornar o empréstimo");
+        assertTrue(returned.get().isReturned(), "Empréstimo deveria estar devolvido");
+        assertNotNull(returned.get().getReturnDate(), "Data de devolução deveria estar preenchida");
     }
 
-    public void testReturnLoanedBookNotFound() {
-        System.out.print("testReturnLoanedBookNotFound: ");
+    @Test
+    @DisplayName("Deve lançar exceção ao tentar devolver livro não emprestado")
+    void testReturnLoanedBookNotFound() {
+        IllegalStateException exception = assertThrows(
+            IllegalStateException.class,
+            () -> controller.returnLoanedBook("user123", "978-0132350884")
+        );
         
-        LoanController controller = setupController();
-        
-        try {
-            controller.returnLoanedBook("user123", "978-0132350884");
-            assert false : "Deveria lançar IllegalStateException";
-        } catch (IllegalStateException e) {
-            assert e.getMessage().contains("Não há empréstimo aberto") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+        assertTrue(exception.getMessage().contains("Não há empréstimo aberto"), "Mensagem de erro incorreta");
     }
 
-    public void testReturnAlreadyReturned() {
-        System.out.print("testReturnAlreadyReturned: ");
-        
-        LoanController controller = setupController();
+    @Test
+    @DisplayName("Deve lançar exceção ao tentar devolver livro já devolvido")
+    void testReturnAlreadyReturned() {
         controller.loan("user123", "978-0132350884", false);
         controller.returnLoanedBook("user123", "978-0132350884");
         
-        try {
-            controller.returnLoanedBook("user123", "978-0132350884");
-            assert false : "Deveria lançar IllegalStateException";
-        } catch (IllegalStateException e) {
-            assert e.getMessage().contains("Não há empréstimo aberto") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+        IllegalStateException exception = assertThrows(
+            IllegalStateException.class,
+            () -> controller.returnLoanedBook("user123", "978-0132350884")
+        );
+        
+        assertTrue(exception.getMessage().contains("Não há empréstimo aberto"), "Mensagem de erro incorreta");
     }
 
     // ========== Testes de extendDueDate ==========
 
-    public void testExtendDueDate() {
-        System.out.print("testExtendDueDate: ");
-        
-        LoanController controller = setupController();
+    @Test
+    @DisplayName("Deve estender prazo de devolução com sucesso")
+    void testExtendDueDate() {
         controller.loan("user123", "978-0132350884", false);
         
         LocalDate newDate = LocalDate.now().plusDays(20);
         Optional<Loan> extended = controller.extendDueDate("user123", "978-0132350884", newDate);
         
-        assert extended.isPresent() : "Deveria retornar o empréstimo";
-        assert extended.get().getDueDate().equals(newDate) : "Data de devolução deveria ter sido atualizada";
-        
-        printSuccess();
+        assertTrue(extended.isPresent(), "Deveria retornar o empréstimo");
+        assertEquals(newDate, extended.get().getDueDate(), "Data de devolução deveria ter sido atualizada");
     }
 
-    public void testExtendDueDateLoanNotFound() {
-        System.out.print("testExtendDueDateLoanNotFound: ");
+    @Test
+    @DisplayName("Deve lançar exceção ao tentar estender prazo de empréstimo inexistente")
+    void testExtendDueDateLoanNotFound() {
+        IllegalStateException exception = assertThrows(
+            IllegalStateException.class,
+            () -> controller.extendDueDate("user123", "978-0132350884", LocalDate.now().plusDays(20))
+        );
         
-        LoanController controller = setupController();
-        
-        try {
-            controller.extendDueDate("user123", "978-0132350884", LocalDate.now().plusDays(20));
-            assert false : "Deveria lançar IllegalStateException";
-        } catch (IllegalStateException e) {
-            assert e.getMessage().contains("Não há empréstimo aberto") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+        assertTrue(exception.getMessage().contains("Não há empréstimo aberto"), "Mensagem de erro incorreta");
     }
 
-    public void testExtendDueDateInvalid() {
-        System.out.print("testExtendDueDateInvalid: ");
-        
-        LoanController controller = setupController();
+    @Test
+    @DisplayName("Deve lançar exceção ao tentar estender prazo com data inválida")
+    void testExtendDueDateInvalid() {
         controller.loan("user123", "978-0132350884", false);
         
-        try {
-            controller.extendDueDate("user123", "978-0132350884", LocalDate.now().minusDays(1));
-            assert false : "Deveria lançar IllegalStateException";
-        } catch (IllegalStateException e) {
-            assert e.getMessage().contains("Falha ao estender prazo") : "Mensagem de erro incorreta";
-            printSuccess();
-        }
+        IllegalStateException exception = assertThrows(
+            IllegalStateException.class,
+            () -> controller.extendDueDate("user123", "978-0132350884", LocalDate.now().minusDays(1))
+        );
+        
+        assertTrue(exception.getMessage().contains("Falha ao estender prazo"), "Mensagem de erro incorreta");
     }
 
     // ========== Testes de getLoansWithFilter ==========
 
-    public void testGetLoansWithFilterAll() {
-        System.out.print("testGetLoansWithFilterAll: ");
-        
-        LoanController controller = setupController();
+    @Test
+    @DisplayName("Deve retornar todos os empréstimos com filtro ALL")
+    void testGetLoansWithFilterAll() {
         controller.loan("user123", "978-0132350884", false);
         controller.loan("user456", "978-0132350884", false);
         controller.returnLoanedBook("user123", "978-0132350884");
         
         List<Loan> loans = controller.getLoansWithFilter(LoanFilter.ALL);
         
-        assert loans.size() == 2 : "Deveria ter 2 empréstimos";
-        
-        printSuccess();
+        assertEquals(2, loans.size(), "Deveria ter 2 empréstimos");
     }
 
-    public void testGetLoansWithFilterOpen() {
-        System.out.print("testGetLoansWithFilterOpen: ");
-        
-        LoanController controller = setupController();
+    @Test
+    @DisplayName("Deve retornar apenas empréstimos abertos com filtro OPEN")
+    void testGetLoansWithFilterOpen() {
         controller.loan("user123", "978-0132350884", false);
         controller.loan("user456", "978-0132350884", false);
         controller.returnLoanedBook("user123", "978-0132350884");
         
         List<Loan> openLoans = controller.getLoansWithFilter(LoanFilter.OPEN);
         
-        assert openLoans.size() == 1 : "Deveria ter 1 empréstimo aberto";
-        assert !openLoans.get(0).isReturned() : "Empréstimo deveria estar aberto";
-        
-        printSuccess();
+        assertEquals(1, openLoans.size(), "Deveria ter 1 empréstimo aberto");
+        assertFalse(openLoans.get(0).isReturned(), "Empréstimo deveria estar aberto");
     }
 
-    public void testGetLoansWithFilterClosed() {
-        System.out.print("testGetLoansWithFilterClosed: ");
-        
-        LoanController controller = setupController();
+    @Test
+    @DisplayName("Deve retornar apenas empréstimos fechados com filtro CLOSED")
+    void testGetLoansWithFilterClosed() {
         controller.loan("user123", "978-0132350884", false);
         controller.loan("user456", "978-0132350884", false);
         controller.returnLoanedBook("user123", "978-0132350884");
         
         List<Loan> closedLoans = controller.getLoansWithFilter(LoanFilter.CLOSED);
         
-        assert closedLoans.size() == 1 : "Deveria ter 1 empréstimo fechado";
-        assert closedLoans.get(0).isReturned() : "Empréstimo deveria estar devolvido";
-        
-        printSuccess();
+        assertEquals(1, closedLoans.size(), "Deveria ter 1 empréstimo fechado");
+        assertTrue(closedLoans.get(0).isReturned(), "Empréstimo deveria estar devolvido");
     }
 
     // ========== Testes de listLoansSortedByLoanDateDesc ==========
 
-    public void testListLoansSortedByLoanDateDesc() {
-        System.out.print("testListLoansSortedByLoanDateDesc: ");
+    @Test
+    @DisplayName("Deve listar empréstimos ordenados por data decrescente")
+    void testListLoansSortedByLoanDateDesc() {
+        BookController bc = new BookController();
+        UserController uc = new UserController();
         
-        BookController bookController = new BookController();
-        UserController userController = new UserController();
+        bc.addBook("Book 1", "978-0132350884", "Author", "País", 5, true);
+        bc.addBook("Book 2", "978-0306406157", "Author", "País", 5, true);
+        bc.addBook("Book 3", "0306406152", "Author", "País", 5, true);
         
-        bookController.addBook(
-            "Book 1", 
-            "978-0132350884", 
-            "Author", 
-            "País", 
-            5, 
-            true
+        uc.registerUser("User", "user123");
+        
+        LoanController lc = new LoanController(bc, uc);
+        
+        lc.loan("user123", "978-0306406157", false);
+        lc.loan("user123", "978-0132350884", false);
+        lc.loan("user123", "0306406152", false);
+        
+        List<Loan> sorted = lc.listLoansSortedByLoanDateDesc();
+        
+        assertEquals(3, sorted.size(), "Deveria ter 3 empréstimos");
+        assertTrue(
+            sorted.get(0).getLoanDate().isAfter(sorted.get(2).getLoanDate()) 
+            || sorted.get(0).getLoanDate().equals(sorted.get(2).getLoanDate()),
+            "Deveria estar ordenado por data decrescente"
         );
-        bookController.addBook(
-            "Book 2", 
-            "978-0306406157", 
-            "Author", 
-            "País", 
-            5, 
-            true
-        );
-        bookController.addBook(
-            "Book 3",
-            "0306406152", 
-            "Author", 
-            "País", 
-            5, 
-            true
-        );
-        
-        userController.registerUser("User", "user123");
-        
-        LoanController controller = new LoanController(bookController, userController);
-        
-        // Criar empréstimos em ordem não cronológica
-        controller.loan("user123", "978-0306406157", false);
-        controller.loan("user123", "978-0132350884", false);
-        controller.loan("user123", "0306406152", false);
-        
-        List<Loan> sorted = controller.listLoansSortedByLoanDateDesc();
-        
-        assert sorted.size() == 3 : "Deveria ter 3 empréstimos";
-        // Como todos foram criados no mesmo dia, apenas verifica se estão ordenados
-        assert sorted.get(0).getLoanDate().isAfter(sorted.get(2).getLoanDate()) 
-            || sorted.get(0).getLoanDate().equals(sorted.get(2).getLoanDate()) 
-            : "Deveria estar ordenado por data decrescente";
-        
-        printSuccess();
     }
 }

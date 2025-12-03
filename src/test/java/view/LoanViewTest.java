@@ -3,27 +3,17 @@ package view;
 import controller.BookController;
 import controller.LoanController;
 import controller.UserController;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-public class LoanViewTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static void main(String[] args) {
-        LoanViewTest test = new LoanViewTest();
-        
-        System.out.println("=== Testes do LoanView ===");
-        
-        System.out.println("\n\t\tTeste básico");
-        test.testLoanControllerIntegration();
-        
-        System.out.println("\n==========================");
-    }
+@DisplayName("Testes do LoanView")
+class LoanViewTest {
 
-    private void printSuccess() {
-        System.out.println("success!");
-    }
-
-    public void testLoanControllerIntegration() {
-        System.out.print("testLoanControllerIntegration: ");
-        
+    @Test
+    @DisplayName("Deve integrar com LoanController corretamente")
+    void testLoanControllerIntegration() {
         BookController bookController = new BookController();
         UserController userController = new UserController();
         
@@ -42,10 +32,8 @@ public class LoanViewTest {
         
         var loan = loanController.loan("user123", "978-0132350884", false);
         
-        assert loan != null : "Empréstimo deveria ter sido criado";
-        assert !loan.isReturned() : "Empréstimo deveria estar aberto";
-        assert loanController.getAllLoans().size() == 1 : "Deveria ter 1 empréstimo";
-        
-        printSuccess();
+        assertNotNull(loan, "Empréstimo deveria ter sido criado");
+        assertFalse(loan.isReturned(), "Empréstimo deveria estar aberto");
+        assertEquals(1, loanController.getAllLoans().size(), "Deveria ter 1 empréstimo");
     }
 }

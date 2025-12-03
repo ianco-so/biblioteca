@@ -1,37 +1,25 @@
 package view;
 
 import controller.UserController;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-public class UserViewTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static void main(String[] args) {
-        UserViewTest test = new UserViewTest();
-        
-        System.out.println("=== Testes do UserView ===");
-        
-        System.out.println("\n\t\tTeste básico");
-        test.testUserControllerIntegration();
-        
-        System.out.println("\n==========================");
-    }
+@DisplayName("Testes do UserView")
+class UserViewTest {
 
-    private void printSuccess() {
-        System.out.println("success!");
-    }
-
-    public void testUserControllerIntegration() {
-        System.out.print("testUserControllerIntegration: ");
-        
+    @Test
+    @DisplayName("Deve integrar com UserController corretamente")
+    void testUserControllerIntegration() {
         UserController controller = new UserController();
         
         controller.registerUser("João Silva", "user123");
         controller.registerUser("Maria Santos", "user456");
         
         var users = controller.getAllUsers();
-        assert users.size() == 2 : "Controller deveria ter 2 usuários";
-        assert users.get(0).getName().equals("João Silva") : "Primeiro nome incorreto";
-        assert users.get(1).getName().equals("Maria Santos") : "Segundo nome incorreto";
-        
-        printSuccess();
+        assertEquals(2, users.size(), "Controller deveria ter 2 usuários");
+        assertEquals("João Silva", users.get(0).getName(), "Primeiro nome incorreto");
+        assertEquals("Maria Santos", users.get(1).getName(), "Segundo nome incorreto");
     }
 }
